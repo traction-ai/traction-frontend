@@ -130,9 +130,16 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center px-8 py-4 bg-black text-white text-[11px] font-bold uppercase tracking-[0.1em] disabled:opacity-25 hover:bg-gray-400"
+            className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] disabled:opacity-25 hover:bg-accent transition-colors"
+            style={{ padding: "20px 40px", fontSize: "14px" }}
           >
-            {loading ? "Creating..." : "Create Account"}&nbsp;&nbsp;&rarr;
+            {loading ? "Creating..." : "Create Account"}
+            <span
+              className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+              style={{ fontSize: "18px" }}
+            >
+              &rarr;
+            </span>
           </button>
         </div>
       </form>
