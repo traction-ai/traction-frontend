@@ -83,13 +83,27 @@ export function DashboardClient() {
 
     return (
         <div className="flex flex-col h-full">
-            {/* Top bar with switch */}
-            <div className="flex justify-between items-center px-8 lg:px-12 py-4 border-b hairline bg-white flex-shrink-0">
+            {/* Top bar — generous spacing matching projects page */}
+            <div
+                className="flex justify-between items-center border-b hairline bg-white flex-shrink-0"
+                style={{
+                    padding: "clamp(24px, 3vw, 40px) clamp(32px, 4vw, 64px)",
+                }}
+            >
                 <div>
-                    <h1 className="text-[20px] font-black uppercase tracking-tight">
+                    <p
+                        className="swiss-label text-gray-200"
+                        style={{ marginBottom: "10px" }}
+                    >
+                        Workspace
+                    </p>
+                    <h1 className="text-display font-black uppercase tracking-tight leading-none">
                         {isPitchdeckView ? "Pitchdeck" : "Dashboard"}
                     </h1>
-                    <p className="text-[13px] text-gray-300 mt-0.5 leading-relaxed">
+                    <p
+                        className="text-body-lg text-gray-300 leading-relaxed"
+                        style={{ marginTop: "10px" }}
+                    >
                         {isPitchdeckView
                             ? "Review and refine your generated pitchdeck."
                             : "Chat with the agent to create your pitch."}
@@ -98,20 +112,36 @@ export function DashboardClient() {
 
                 <button
                     onClick={() => setIsPitchdeckView(!isPitchdeckView)}
-                    className="group relative flex items-center gap-3 px-5 py-2.5 border border-black text-[11px] font-bold uppercase tracking-[0.08em] hover:bg-black hover:text-white transition-colors duration-200"
+                    className="group relative flex items-center border border-black text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-black hover:text-white transition-colors duration-200 flex-shrink-0"
+                    style={{ padding: "18px 36px", gap: "14px" }}
                 >
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full bg-accent opacity-75" style={{ borderRadius: '50%' }} />
-                        <span className="relative inline-flex h-2 w-2 bg-accent" style={{ borderRadius: '50%' }} />
+                    <span className="relative flex" style={{ width: "10px", height: "10px" }}>
+                        <span
+                            className="animate-ping absolute inset-0 bg-accent opacity-75"
+                            style={{ borderRadius: "50%" }}
+                        />
+                        <span
+                            className="relative inline-flex bg-accent"
+                            style={{ width: "10px", height: "10px", borderRadius: "50%" }}
+                        />
                     </span>
                     {isPitchdeckView ? "Chat" : "Pitchdeck"}
+                    <span
+                        className="inline-block transition-transform group-hover:translate-x-0.5"
+                        style={{ fontSize: "16px" }}
+                    >
+                        &rarr;
+                    </span>
                 </button>
             </div>
 
             {/* Main content */}
             <div className="flex-1 overflow-hidden">
                 {isPitchdeckView ? (
-                    <div className="h-full w-full bg-[#fafafa] p-6 lg:p-10">
+                    <div
+                        className="h-full w-full bg-[#fafafa]"
+                        style={{ padding: "clamp(24px, 3vw, 48px) clamp(32px, 4vw, 64px)" }}
+                    >
                         <div className="h-full max-w-[1200px] mx-auto border hairline shadow-sm bg-white overflow-hidden">
                             <DeckViewer slides={MOCK_SLIDES} />
                         </div>

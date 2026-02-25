@@ -19,7 +19,7 @@ export function SuggestionsPanel({ suggestions }: SuggestionsPanelProps) {
 
   if (items.length === 0) {
     return (
-      <p className="text-[13px] text-gray-200">No suggestions available.</p>
+      <p className="text-[15px] text-gray-200">No suggestions available.</p>
     );
   }
 
@@ -28,31 +28,37 @@ export function SuggestionsPanel({ suggestions }: SuggestionsPanelProps) {
       {items.map((suggestion) => (
         <li
           key={suggestion.id}
-          className="border-b hairline pb-5 pt-5 first:pt-0 last:border-b-0"
+          className="border-b hairline first:pt-0 last:border-b-0"
+          style={{ padding: "clamp(18px, 2vw, 28px) 0" }}
         >
-          <p className="text-[13px] mb-3 leading-relaxed">
+          <p
+            className="leading-relaxed"
+            style={{ fontSize: "15px", lineHeight: "1.8" }}
+          >
             {suggestion.description}
           </p>
 
           {suggestion.status === "pending" ? (
-            <div className="flex gap-4">
+            <div className="flex" style={{ gap: "24px", marginTop: "16px" }}>
               <button
                 type="button"
-                className="text-[11px] font-bold uppercase tracking-[0.08em] text-black hover:underline underline-offset-2"
+                className="text-[12px] font-bold uppercase tracking-[0.08em] text-black hover:text-accent transition-colors"
                 onClick={() => updateStatus(suggestion.id, "applied")}
               >
                 Apply
               </button>
               <button
                 type="button"
-                className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-200 hover:underline underline-offset-2"
+                className="text-[12px] font-bold uppercase tracking-[0.08em] text-gray-200 hover:text-black transition-colors"
                 onClick={() => updateStatus(suggestion.id, "dismissed")}
               >
                 Dismiss
               </button>
             </div>
           ) : (
-            <Badge variant={suggestion.status}>{suggestion.status}</Badge>
+            <div style={{ marginTop: "14px" }}>
+              <Badge variant={suggestion.status}>{suggestion.status}</Badge>
+            </div>
           )}
         </li>
       ))}

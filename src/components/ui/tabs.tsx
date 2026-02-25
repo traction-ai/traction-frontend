@@ -45,11 +45,12 @@ export function Tabs({
             aria-selected={activeTab === tab.id}
             onClick={() => handleTabChange(tab.id)}
             className={cn(
-              "px-5 py-3.5 text-[11px] font-bold uppercase tracking-[0.08em]",
+              "text-[12px] font-bold uppercase tracking-[0.1em]",
               activeTab === tab.id
                 ? "border-b-2 border-black text-black"
                 : "text-gray-200 hover:text-black"
             )}
+            style={{ padding: "18px 24px" }}
           >
             {tab.label}
           </button>

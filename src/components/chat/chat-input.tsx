@@ -20,7 +20,7 @@ export function ChatInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
   }, [value]);
 
   const handleSubmit = useCallback(
@@ -47,7 +47,11 @@ export function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex gap-3 p-4 border-t hairline-dark bg-white"
+      className="flex items-end bg-white"
+      style={{
+        padding: "clamp(20px, 2.5vw, 32px) 0",
+        gap: "clamp(16px, 2vw, 28px)",
+      }}
     >
       <textarea
         ref={textareaRef}
@@ -57,15 +61,17 @@ export function ChatInput({
         placeholder={placeholder}
         disabled={disabled}
         rows={1}
-        className="flex-1 resize-none border-b border-gray-100 px-0 py-2.5 text-[13px] placeholder:text-gray-200 focus:outline-none focus:border-black bg-transparent"
+        className="flex-1 resize-none border-b-2 border-gray-100 bg-transparent placeholder:text-gray-200 focus:outline-none focus:border-black transition-colors"
+        style={{ padding: "16px 0", fontSize: "16px" }}
       />
       <button
         type="submit"
         disabled={!value.trim() || disabled}
-        className="flex-shrink-0 px-5 py-2.5 bg-black text-white text-[11px] font-bold uppercase tracking-[0.08em] disabled:opacity-15 hover:bg-gray-400"
+        className="flex-shrink-0 bg-black text-white font-bold uppercase tracking-[0.1em] disabled:opacity-15 hover:bg-accent transition-colors"
+        style={{ padding: "18px 32px", fontSize: "13px" }}
         aria-label="Send message"
       >
-        Send
+        Send&ensp;&rarr;
       </button>
     </form>
   );

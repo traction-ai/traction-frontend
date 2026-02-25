@@ -72,31 +72,79 @@ export function ChatPanel({ initialMessages, projectId }: ChatPanelProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-4">
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="px-5 py-4 bg-[#f7f7f7]">
-              <div className="flex gap-1.5">
-                <span className="w-1.5 h-1.5 bg-gray-200 animate-pulse" />
-                <span
-                  className="w-1.5 h-1.5 bg-gray-200 animate-pulse"
-                  style={{ animationDelay: "0.2s" }}
-                />
-                <span
-                  className="w-1.5 h-1.5 bg-gray-200 animate-pulse"
-                  style={{ animationDelay: "0.4s" }}
-                />
-              </div>
-            </div>
+      {/* Agent header — generous */}
+      <div
+        className="flex-shrink-0 border-b hairline bg-[#fafafa]"
+        style={{ padding: "clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 36px)" }}
+      >
+        <div className="flex items-center" style={{ gap: "18px" }}>
+          <div
+            className="flex items-center justify-center bg-black text-white text-[14px] font-bold flex-shrink-0"
+            style={{ width: "44px", height: "44px" }}
+          >
+            T
           </div>
-        )}
+          <div>
+            <p className="font-bold uppercase tracking-[0.08em]" style={{ fontSize: "15px" }}>
+              Traction Agent
+            </p>
+            <p
+              className="text-[12px] text-green-600 flex items-center"
+              style={{ gap: "8px", marginTop: "6px" }}
+            >
+              <span
+                className="inline-block bg-green-500 flex-shrink-0"
+                style={{ width: "8px", height: "8px" }}
+              />
+              Online
+            </p>
+          </div>
+        </div>
       </div>
 
-      <ChatInput onSubmit={handleSend} disabled={isTyping} />
+      {/* Messages — generous padding */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto"
+        style={{ padding: "clamp(28px, 3vw, 48px) clamp(24px, 3vw, 36px)" }}
+      >
+        <div className="flex flex-col" style={{ gap: "clamp(24px, 3vw, 40px)" }}>
+          {messages.map((msg) => (
+            <ChatMessage key={msg.id} message={msg} />
+          ))}
+
+          {isTyping && (
+            <div className="flex justify-start" style={{ paddingLeft: "62px" }}>
+              <div
+                className="bg-[#f2f2f2]"
+                style={{ padding: "22px 28px" }}
+              >
+                <div className="flex" style={{ gap: "10px" }}>
+                  <span
+                    className="bg-gray-200 animate-pulse"
+                    style={{ width: "9px", height: "9px" }}
+                  />
+                  <span
+                    className="bg-gray-200 animate-pulse"
+                    style={{ width: "9px", height: "9px", animationDelay: "0.2s" }}
+                  />
+                  <span
+                    className="bg-gray-200 animate-pulse"
+                    style={{ width: "9px", height: "9px", animationDelay: "0.4s" }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Input */}
+      <div className="border-t hairline flex-shrink-0">
+        <div style={{ padding: "0 clamp(24px, 3vw, 36px)" }}>
+          <ChatInput onSubmit={handleSend} disabled={isTyping} />
+        </div>
+      </div>
     </div>
   );
 }

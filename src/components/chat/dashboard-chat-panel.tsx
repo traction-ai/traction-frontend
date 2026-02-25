@@ -11,8 +11,8 @@ interface DashboardChatPanelProps {
 function AgentAvatar() {
   return (
     <div
-      className="w-8 h-8 bg-black text-white flex items-center justify-center text-[11px] font-black flex-shrink-0"
-      style={{ borderRadius: "50%" }}
+      className="flex items-center justify-center bg-black text-white text-[14px] font-black flex-shrink-0"
+      style={{ width: "48px", height: "48px" }}
     >
       T
     </div>
@@ -28,21 +28,27 @@ function MessageBubble({
 
   return (
     <div
-      className={`flex gap-3 items-start ${isUser ? "flex-row-reverse" : "flex-row"}`}
+      className={`flex items-start ${isUser ? "flex-row-reverse" : "flex-row"}`}
+      style={{ gap: "20px" }}
     >
       {!isUser && <AgentAvatar />}
       <div
-        className={`max-w-[75%] px-5 py-4 ${isUser
-            ? "bg-black text-white"
+        className={`max-w-[75%] ${isUser
+            ? "bg-accent/[0.06] border border-accent/20 text-black"
             : "bg-[#f4f4f5] text-black border hairline"
           }`}
+        style={{ padding: "clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 36px)" }}
       >
-        <p className="text-[14px] leading-[1.7] whitespace-pre-wrap">
+        <p
+          className="whitespace-pre-wrap"
+          style={{ fontSize: "16px", lineHeight: "1.8" }}
+        >
           {message.content}
         </p>
         <time
-          className={`block text-[10px] mt-2 ${isUser ? "text-white/40" : "text-gray-200"
+          className={`block text-[12px] ${isUser ? "text-accent/40" : "text-gray-200"
             }`}
+          style={{ marginTop: "16px" }}
         >
           {new Date(message.createdAt).toLocaleTimeString("en-US", {
             hour: "numeric",
@@ -61,7 +67,7 @@ export function DashboardChatPanel({ onDeckReady }: DashboardChatPanelProps) {
       projectId: "new",
       role: "assistant",
       content:
-        "Hey there! 👋 I'm your Traction pitchdeck assistant. Tell me about your startup or business idea and I'll help you craft a compelling pitch.",
+        "Hey there! I'm your Traction pitchdeck assistant. Tell me about your startup or business idea and I'll help you craft a compelling pitch.",
       createdAt: new Date().toISOString(),
     },
   ]);
@@ -97,7 +103,7 @@ export function DashboardChatPanel({ onDeckReady }: DashboardChatPanelProps) {
 
         if (flowStep === 0) {
           aiResponseContent =
-            "That sounds exciting! To build a strong pitchdeck, I'll need a few more details.\n\nCould you tell me about:\n• Your target audience\n• Revenue model\n• Market size estimate\n• Key competitive advantages";
+            "That sounds exciting! To build a strong pitchdeck, I'll need a few more details.\n\nCould you tell me about:\n\n- Your target audience\n- Revenue model\n- Market size estimate\n- Key competitive advantages";
           nextStep = 1;
         } else if (flowStep === 1) {
           aiResponseContent =
@@ -121,7 +127,6 @@ export function DashboardChatPanel({ onDeckReady }: DashboardChatPanelProps) {
         setFlowStep(nextStep);
         setIsTyping(false);
 
-        // If step 3, simulate generation time then finalize
         if (nextStep === 3) {
           setIsTyping(true);
           setTimeout(() => {
@@ -130,7 +135,7 @@ export function DashboardChatPanel({ onDeckReady }: DashboardChatPanelProps) {
               projectId: "new",
               role: "assistant",
               content:
-                "✅ Your pitchdeck is ready! Click the \"Pitchdeck\" button in the top-right corner to view it.",
+                "Your pitchdeck is ready! Click the \"Pitchdeck\" button in the top-right corner to view it.",
               createdAt: new Date().toISOString(),
             };
             setMessages((prev) => [...prev, finalResponse]);
@@ -146,61 +151,84 @@ export function DashboardChatPanel({ onDeckReady }: DashboardChatPanelProps) {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Chat header */}
-      <div className="px-8 py-4 border-b hairline flex items-center gap-3 flex-shrink-0">
+      {/* Chat header — generous spacing */}
+      <div
+        className="border-b hairline flex items-center flex-shrink-0 bg-[#fafafa]"
+        style={{
+          padding: "clamp(20px, 2.5vw, 36px) clamp(32px, 4vw, 64px)",
+          gap: "20px",
+        }}
+      >
         <AgentAvatar />
         <div>
-          <p className="text-[13px] font-bold uppercase tracking-[0.06em]">
+          <p
+            className="font-bold uppercase tracking-[0.08em]"
+            style={{ fontSize: "16px" }}
+          >
             Traction Agent
           </p>
-          <p className="text-[11px] text-gray-200 flex items-center gap-1.5">
+          <p
+            className="text-[12px] text-green-600 flex items-center"
+            style={{ gap: "8px", marginTop: "6px" }}
+          >
             <span
-              className="w-1.5 h-1.5 bg-green-500 inline-block"
-              style={{ borderRadius: "50%" }}
+              className="inline-block bg-green-500 flex-shrink-0"
+              style={{ width: "8px", height: "8px" }}
             />
             Online
           </p>
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Messages — generous padding */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-10 lg:px-16 py-8 space-y-6"
+        className="flex-1 overflow-y-auto"
+        style={{
+          padding: "clamp(32px, 4vw, 56px) clamp(32px, 4vw, 64px)",
+        }}
       >
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
-        ))}
+        <div className="flex flex-col" style={{ gap: "clamp(28px, 3vw, 44px)" }}>
+          {messages.map((msg) => (
+            <MessageBubble key={msg.id} message={msg} />
+          ))}
 
-        {isTyping && (
-          <div className="flex gap-3 items-start">
-            <AgentAvatar />
-            <div className="px-5 py-4 bg-[#f4f4f5] border hairline">
-              <div className="flex gap-1.5 py-1">
-                <span className="w-2 h-2 bg-gray-300 animate-pulse" style={{ borderRadius: "50%" }} />
-                <span
-                  className="w-2 h-2 bg-gray-300 animate-pulse"
-                  style={{ animationDelay: "0.2s", borderRadius: "50%" }}
-                />
-                <span
-                  className="w-2 h-2 bg-gray-300 animate-pulse"
-                  style={{ animationDelay: "0.4s", borderRadius: "50%" }}
-                />
+          {isTyping && (
+            <div className="flex items-start" style={{ gap: "20px" }}>
+              <AgentAvatar />
+              <div
+                className="bg-[#f4f4f5] border hairline"
+                style={{ padding: "24px 32px" }}
+              >
+                <div className="flex" style={{ gap: "10px" }}>
+                  <span
+                    className="bg-gray-300 animate-pulse"
+                    style={{ width: "10px", height: "10px" }}
+                  />
+                  <span
+                    className="bg-gray-300 animate-pulse"
+                    style={{ width: "10px", height: "10px", animationDelay: "0.2s" }}
+                  />
+                  <span
+                    className="bg-gray-300 animate-pulse"
+                    style={{ width: "10px", height: "10px", animationDelay: "0.4s" }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Input */}
+      {/* Input — generous padding */}
       <div className="border-t hairline bg-white flex-shrink-0">
-        <div className="px-6 md:px-10 lg:px-16">
+        <div style={{ padding: "0 clamp(32px, 4vw, 64px)" }}>
           <ChatInput
             onSubmit={handleSend}
             disabled={isTyping || flowStep === 4}
             placeholder={
               flowStep === 4
-                ? "Pitchdeck complete — switch to view it →"
+                ? "Pitchdeck complete — switch to view it"
                 : "Type your message..."
             }
           />
