@@ -17,7 +17,6 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
     const [sort, setSort] = useState<SortOption>("recent");
     const [filter, setFilter] = useState<FilterStatus>("all");
 
-    /* ── Filtered + sorted list ── */
     const filtered =
         filter === "all" ? projects : projects.filter((p) => p.status === filter);
 
@@ -28,7 +27,6 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
         return a.status.localeCompare(b.status);
     });
 
-    /* ── Status counts for pills ── */
     const statusCounts = projects.reduce(
         (acc, p) => {
             acc[p.status] = (acc[p.status] || 0) + 1;
@@ -38,42 +36,48 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
     );
 
     return (
-        <div className="px-8 lg:px-12 py-12 lg:py-16 max-w-[1400px]">
-            {/* ── Header row ── */}
+        <div style={{ padding: "clamp(32px, 4vw, 64px) clamp(32px, 4vw, 64px)" }}>
+            {/* Header row */}
             <div className="animate-fade-up">
-                <div className="flex items-start justify-between gap-8">
+                <div className="flex items-start justify-between" style={{ gap: "clamp(24px, 3vw, 48px)" }}>
                     <div>
-                        <p className="swiss-label text-gray-200 mb-3">Portfolio</p>
+                        <p className="swiss-label text-gray-200" style={{ marginBottom: "12px" }}>
+                            Portfolio
+                        </p>
                         <h1 className="text-display font-black uppercase tracking-tight leading-none">
                             Projects
                         </h1>
                     </div>
 
-                    {/* Meta counters – top right like the reference */}
-                    <div className="hidden md:flex items-start gap-12 pt-1">
+                    <div className="hidden md:flex items-start pt-1" style={{ gap: "clamp(32px, 4vw, 56px)" }}>
                         <div>
-                            <p className="text-[32px] font-black leading-none">{projects.length}</p>
-                            <p className="swiss-label text-gray-200 mt-1">Total</p>
+                            <p className="text-[36px] font-black leading-none">{projects.length}</p>
+                            <p className="swiss-label text-gray-200" style={{ marginTop: "6px" }}>Total</p>
                         </div>
                         <div>
-                            <p className="text-[32px] font-black leading-none">
+                            <p className="text-[36px] font-black leading-none">
                                 {statusCounts["shared"] || 0}
                             </p>
-                            <p className="swiss-label text-gray-200 mt-1">Shared</p>
+                            <p className="swiss-label text-gray-200" style={{ marginTop: "6px" }}>Shared</p>
                         </div>
                     </div>
                 </div>
 
-                <p className="text-body text-gray-300 mt-4 max-w-[520px] leading-relaxed">
+                <p
+                    className="text-body-lg text-gray-300 max-w-[560px] leading-relaxed"
+                    style={{ marginTop: "16px" }}
+                >
                     All your pitch decks in one place. Click a project to open its
                     workspace.
                 </p>
             </div>
 
-            {/* ── Filter + Sort bar ── */}
-            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 animate-fade-up delay-1">
-                {/* Filter pills */}
-                <div className="flex items-center gap-2">
+            {/* Filter + Sort bar */}
+            <div
+                className="flex flex-wrap items-center justify-between animate-fade-up delay-1"
+                style={{ marginTop: "clamp(28px, 3vw, 48px)", gap: "16px" }}
+            >
+                <div className="flex items-center" style={{ gap: "8px" }}>
                     {(
                         [
                             { value: "all", label: "All" },
@@ -86,10 +90,11 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                         <button
                             key={f.value}
                             onClick={() => setFilter(f.value)}
-                            className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] border transition-colors duration-200 ${filter === f.value
+                            className={`text-[12px] font-bold uppercase tracking-[0.08em] border transition-colors duration-200 ${filter === f.value
                                     ? "bg-black text-white border-black"
                                     : "bg-white text-gray-300 border-gray-100 hover:border-black hover:text-black"
                                 }`}
+                            style={{ padding: "10px 18px" }}
                         >
                             {f.label}
                             {f.value !== "all" && statusCounts[f.value]
@@ -99,8 +104,7 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                     ))}
                 </div>
 
-                {/* Sort */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center" style={{ gap: "16px" }}>
                     <span className="swiss-label text-gray-200">Sort</span>
                     {(
                         [
@@ -112,7 +116,7 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                         <button
                             key={s.value}
                             onClick={() => setSort(s.value)}
-                            className={`text-[11px] font-bold uppercase tracking-[0.08em] transition-colors duration-200 ${sort === s.value ? "text-black" : "text-gray-200 hover:text-black"
+                            className={`text-[12px] font-bold uppercase tracking-[0.08em] transition-colors duration-200 ${sort === s.value ? "text-black" : "text-gray-200 hover:text-black"
                                 }`}
                         >
                             {s.label}
@@ -121,29 +125,32 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                 </div>
             </div>
 
-            {/* ── Hairline ── */}
-            <div className="border-t hairline mt-6 mb-10 animate-fade-up delay-2" />
+            {/* Hairline */}
+            <div
+                className="border-t hairline animate-fade-up delay-2"
+                style={{ margin: "20px 0 clamp(28px, 3vw, 48px)" }}
+            />
 
-            {/* ── Projects Grid — 4 columns matching reference ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 animate-fade-up delay-3">
+            {/* Projects Grid */}
+            <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animate-fade-up delay-3"
+                style={{ columnGap: "clamp(20px, 2.5vw, 40px)", rowGap: "clamp(32px, 4vw, 56px)" }}
+            >
                 {/* New Project card */}
-                <Link
-                    href="/dashboard"
-                    className="group block"
-                >
+                <Link href="/dashboard" className="group block">
                     <div className="aspect-[4/3] bg-[#f5f5f5] border border-dashed border-gray-100 flex flex-col items-center justify-center transition-all duration-300 group-hover:border-black group-hover:bg-[#fafafa]">
-                        <span className="text-[40px] font-extralight text-gray-100 group-hover:text-black transition-colors duration-300 leading-none">
+                        <span className="text-[44px] font-extralight text-gray-100 group-hover:text-black transition-colors duration-300 leading-none">
                             +
                         </span>
-                        <span className="swiss-label text-gray-200 mt-4 group-hover:text-black transition-colors duration-300">
+                        <span className="swiss-label text-gray-200 group-hover:text-black transition-colors duration-300" style={{ marginTop: "16px" }}>
                             New Pitch
                         </span>
                     </div>
-                    <div className="flex items-center justify-between mt-4">
-                        <p className="text-[13px] font-bold text-gray-200 group-hover:text-black transition-colors duration-300">
+                    <div className="flex items-center justify-between" style={{ marginTop: "16px" }}>
+                        <p className="text-[14px] font-bold text-gray-200 group-hover:text-black transition-colors duration-300">
                             Create Project
                         </p>
-                        <span className="text-[11px] text-gray-200">—</span>
+                        <span className="text-[12px] text-gray-200">&mdash;</span>
                     </div>
                 </Link>
 
@@ -155,40 +162,35 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                         className="group block"
                         style={{ animationDelay: `${0.35 + i * 0.08}s` }}
                     >
-                        {/* Thumbnail area */}
                         <div className="aspect-[4/3] bg-[#f2f2f2] border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-black relative">
-                            {/* Abstract pattern background unique per project */}
                             <div
                                 className="absolute inset-0 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-500"
                                 style={{
                                     backgroundImage: `repeating-linear-gradient(${45 + parseInt(project.id.replace(/\D/g, "")) * 30}deg, #000 0px, #000 1px, transparent 1px, transparent ${12 + parseInt(project.id.replace(/\D/g, "")) * 4}px)`,
                                 }}
                             />
-                            {/* Slide count indicator */}
                             <div className="relative z-10 flex flex-col items-center">
-                                <span className="text-[28px] font-black text-gray-100 group-hover:text-black transition-colors duration-300 leading-none">
+                                <span className="text-[32px] font-black text-gray-100 group-hover:text-black transition-colors duration-300 leading-none">
                                     {project.slidesHtml.length}
                                 </span>
-                                <span className="text-[10px] font-mono text-gray-200 mt-1 uppercase tracking-widest">
+                                <span className="text-[11px] font-mono text-gray-200 uppercase tracking-widest" style={{ marginTop: "6px" }}>
                                     slides
                                 </span>
                             </div>
 
-                            {/* Status badge overlay */}
-                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Badge variant={project.status}>{project.status}</Badge>
                             </div>
                         </div>
 
-                        {/* Project info — name left, date right (like reference) */}
-                        <div className="flex items-start justify-between mt-4 gap-4">
+                        <div className="flex items-start justify-between" style={{ marginTop: "16px", gap: "16px" }}>
                             <div className="min-w-0 flex-1">
-                                <p className="text-[13px] font-bold text-black truncate leading-tight">
+                                <p className="text-[15px] font-bold text-black truncate leading-tight">
                                     {project.name}
                                 </p>
-                                <p className="text-[11px] text-gray-200 mt-1 truncate">
+                                <p className="text-[12px] text-gray-200 truncate" style={{ marginTop: "6px" }}>
                                     {project.prompt.length > 60
-                                        ? project.prompt.slice(0, 60) + "…"
+                                        ? project.prompt.slice(0, 60) + "\u2026"
                                         : project.prompt}
                                 </p>
                             </div>
@@ -200,11 +202,11 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                 ))}
             </div>
 
-            {/* ── Empty state ── */}
+            {/* Empty state */}
             {sorted.length === 0 && (
-                <div className="text-center py-24 animate-fade-in">
+                <div className="text-center animate-fade-in" style={{ padding: "80px 0" }}>
                     <p className="text-heading-sm font-bold uppercase">No projects found</p>
-                    <p className="text-body-sm text-gray-300 mt-3">
+                    <p className="text-body text-gray-300" style={{ marginTop: "12px" }}>
                         {filter !== "all"
                             ? `No ${filter} projects. Try a different filter.`
                             : "Create your first pitch deck to get started."}
@@ -212,12 +214,15 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
                 </div>
             )}
 
-            {/* ── Bottom info bar ── */}
-            <div className="mt-16 pt-6 border-t hairline flex items-center justify-between animate-fade-up delay-4">
-                <p className="text-[11px] text-gray-200">
+            {/* Bottom info bar */}
+            <div
+                className="border-t hairline flex items-center justify-between animate-fade-up delay-4"
+                style={{ marginTop: "clamp(40px, 5vw, 72px)", paddingTop: "20px" }}
+            >
+                <p className="text-[12px] text-gray-200">
                     Showing {sorted.length} of {projects.length} projects
                 </p>
-                <p className="text-[11px] text-gray-200 font-mono">
+                <p className="text-[12px] text-gray-200 font-mono">
                     TRACTION<span className="text-accent">.</span>
                 </p>
             </div>

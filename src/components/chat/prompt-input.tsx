@@ -17,22 +17,40 @@ export function PromptInput() {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="relative group">
+    <form
+      onSubmit={handleSubmit}
+      className="border border-gray-100 hover:border-black focus-within:border-black transition-colors bg-[#fafafa]"
+      style={{ padding: "clamp(24px, 3vw, 40px)" }}
+    >
       <input
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="e.g. A fintech app for cross-border payments..."
-        className="w-full h-[60px] pl-0 pr-16 text-[17px] bg-transparent border-b border-black placeholder:text-gray-200 focus:outline-none focus:border-accent"
+        className="w-full bg-transparent text-[17px] placeholder:text-gray-200 focus:outline-none"
+        style={{ padding: "0 0 20px 0" }}
       />
-      <button
-        type="submit"
-        disabled={!value.trim()}
-        className="absolute right-0 bottom-0 h-[44px] px-6 flex items-center justify-center bg-black text-white text-[11px] font-bold uppercase tracking-[0.1em] disabled:opacity-15 hover:bg-gray-400 mb-[1px]"
-        aria-label="Generate pitch deck"
-      >
-        Initialize&nbsp;&nbsp;&rarr;
-      </button>
+      <div className="border-t hairline" style={{ paddingTop: "20px" }}>
+        <div className="flex items-center justify-between">
+          <p className="text-[12px] text-gray-200">
+            Describe your startup idea and we&apos;ll generate everything.
+          </p>
+          <button
+            type="submit"
+            disabled={!value.trim()}
+            className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] disabled:opacity-15 hover:bg-accent transition-colors flex-shrink-0"
+            style={{ padding: "14px 28px", fontSize: "12px" }}
+          >
+            Initialize
+            <span
+              className="inline-block ml-3 transition-transform group-hover:translate-x-1"
+              style={{ fontSize: "16px" }}
+            >
+              &rarr;
+            </span>
+          </button>
+        </div>
+      </div>
     </form>
   );
 }

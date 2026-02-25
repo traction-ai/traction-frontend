@@ -4,25 +4,30 @@ import { projects } from "@/lib/mock-data";
 
 export default function DashboardPage() {
   return (
-    <div className="px-8 lg:px-12 py-12 lg:py-16 max-w-[1100px]">
+    <div style={{ padding: "clamp(32px, 4vw, 64px) clamp(32px, 4vw, 64px)" }}>
       {/* Header */}
       <div className="animate-fade-up">
         <h1 className="text-heading-lg font-black uppercase tracking-tight">
           Dashboard
         </h1>
-        <p className="text-body text-gray-300 mt-3 max-w-[440px] leading-relaxed">
+        <p
+          className="text-body-lg text-gray-300 max-w-[520px] leading-relaxed"
+          style={{ marginTop: "12px" }}
+        >
           Create a new pitch or continue where you left off.
         </p>
       </div>
 
       {/* Prompt input */}
-      <div className="mt-12 animate-fade-up delay-1">
-        <p className="swiss-label text-gray-200 mb-4">New Project</p>
+      <div className="animate-fade-up delay-1" style={{ marginTop: "clamp(32px, 4vw, 56px)" }}>
+        <p className="swiss-label text-gray-200" style={{ marginBottom: "16px" }}>
+          New Project
+        </p>
         <PromptInput />
       </div>
 
       {/* Projects */}
-      <div className="mt-20 animate-fade-up delay-2">
+      <div className="animate-fade-up delay-2" style={{ marginTop: "clamp(48px, 5vw, 80px)" }}>
         <ProjectGrid projects={projects} />
       </div>
     </div>
