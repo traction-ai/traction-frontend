@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       setLoading(true);
       timeoutRef.current = setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/projects");
       }, 1000);
     },
     [email, password, router]

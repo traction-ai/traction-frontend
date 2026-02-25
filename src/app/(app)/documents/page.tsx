@@ -1,4 +1,6 @@
 import { projects, documents } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   "product-description": "Product Description",
@@ -82,36 +84,44 @@ export default function DocumentsPage() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               style={{ columnGap: "clamp(20px, 2.5vw, 40px)", rowGap: "clamp(20px, 2.5vw, 36px)" }}
             >
-              {docs.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="border border-gray-100 hover:border-black transition-colors cursor-pointer group"
-                  style={{ padding: "clamp(20px, 2.5vw, 32px)" }}
-                >
-                  <div className="flex items-start justify-between" style={{ marginBottom: "16px" }}>
-                    <span className="text-[11px] font-mono text-accent">
-                      {doc.type.split("-").map(w => w[0]).join("").toUpperCase()}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-[0.08em] ${
-                        doc.status === "ready"
-                          ? "text-green-700"
-                          : doc.status === "generating"
-                          ? "text-amber-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {doc.status}
-                    </span>
+              {docs.map((doc) => {
+                const isPending = doc.status === "pending";
+                const cardContent = (
+                  <>
+                    <div className="flex items-center justify-between" style={{ marginBottom: "16px" }}>
+                      <span className="text-[11px] font-mono text-accent">
+                        {doc.type.split("-").map(w => w[0]).join("").toUpperCase()}
+                      </span>
+                      <Badge variant={doc.status}>{doc.status}</Badge>
+                    </div>
+                    <h3 className={`text-[15px] font-bold leading-snug ${isPending ? "" : "group-hover:text-accent"} transition-colors`}>
+                      {DOC_TYPE_LABELS[doc.type] || doc.title}
+                    </h3>
+                    <p className="text-[13px] text-gray-200 leading-relaxed" style={{ marginTop: "10px" }}>
+                      {doc.content.slice(0, 100)}{doc.content.length > 100 ? "\u2026" : ""}
+                    </p>
+                  </>
+                );
+
+                return isPending ? (
+                  <div
+                    key={doc.id}
+                    className="border border-gray-100 block opacity-60 cursor-default"
+                    style={{ padding: "clamp(20px, 2.5vw, 32px)" }}
+                  >
+                    {cardContent}
                   </div>
-                  <h3 className="text-[15px] font-bold leading-snug group-hover:text-accent transition-colors">
-                    {DOC_TYPE_LABELS[doc.type] || doc.title}
-                  </h3>
-                  <p className="text-[12px] text-gray-200 leading-relaxed" style={{ marginTop: "8px" }}>
-                    {doc.content.slice(0, 80)}{doc.content.length > 80 ? "\u2026" : ""}
-                  </p>
-                </div>
-              ))}
+                ) : (
+                  <Link
+                    key={doc.id}
+                    href={`/projects/${doc.projectId}/documents/${doc.id}`}
+                    className="border border-gray-100 hover:border-black transition-colors group block"
+                    style={{ padding: "clamp(20px, 2.5vw, 32px)" }}
+                  >
+                    {cardContent}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ))}

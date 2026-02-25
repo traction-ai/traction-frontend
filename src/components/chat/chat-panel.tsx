@@ -1,24 +1,23 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { ChatMessage as ChatMessageType } from "@/types";
+import type { ChatMessage as ChatMessageType, ProjectDocument } from "@/types";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
-
-const MOCK_RESPONSES = [
-  "I've updated the slide to reflect your feedback. The changes should be visible now.",
-  "Good suggestion. I've adjusted the content and formatting accordingly.",
-  "I've made that change. Would you like me to modify anything else?",
-  "Done. The document has been updated with the new information.",
-  "I've refined the section based on your input. Let me know if it looks right.",
-];
 
 interface ChatPanelProps {
   initialMessages: ChatMessageType[];
   projectId: string;
+  onDocumentsReady?: (docIds: string[]) => void;
+  pendingDocuments?: ProjectDocument[];
 }
 
-export function ChatPanel({ initialMessages, projectId }: ChatPanelProps) {
+export function ChatPanel({
+  initialMessages,
+  projectId,
+  onDocumentsReady,
+  pendingDocuments,
+}: ChatPanelProps) {
   const [messages, setMessages] =
     useState<ChatMessageType[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
@@ -52,22 +51,48 @@ export function ChatPanel({ initialMessages, projectId }: ChatPanelProps) {
       setIsTyping(true);
 
       timeoutRef.current = setTimeout(() => {
+        // Pick 2-3 random pending documents to mark as ready
+        const pending = pendingDocuments ?? [];
+        const pickCount = Math.min(
+          pending.length,
+          Math.floor(Math.random() * 2) + 2 // 2 or 3
+        );
+        const shuffled = [...pending].sort(() => Math.random() - 0.5);
+        const picked = shuffled.slice(0, pickCount);
+
+        // Build response text
+        let responseText: string;
+        if (picked.length > 0) {
+          const names = picked.map((d) => d.title);
+          const remaining = pending.length - picked.length;
+          if (remaining > 0) {
+            responseText = `Based on your input, I've marked **${names.join("** and **")}** as ready. ${remaining} more to go.`;
+          } else {
+            responseText = `I've marked **${names.join("** and **")}** as ready. All documents are now complete! You can now create your pitchdeck.`;
+          }
+        } else {
+          responseText =
+            "All documents are already ready. You can now create your pitchdeck.";
+        }
+
         const aiResponse: ChatMessageType = {
           id: `msg-${Date.now() + 1}`,
           projectId,
           role: "assistant",
-          content:
-            MOCK_RESPONSES[
-              Math.floor(Math.random() * MOCK_RESPONSES.length)
-            ],
+          content: responseText,
           createdAt: new Date().toISOString(),
         };
 
         setMessages((prev) => [...prev, aiResponse]);
         setIsTyping(false);
+
+        // Notify parent about newly ready documents
+        if (picked.length > 0 && onDocumentsReady) {
+          onDocumentsReady(picked.map((d) => d.id));
+        }
       }, 1500);
     },
-    [projectId]
+    [projectId, onDocumentsReady, pendingDocuments]
   );
 
   return (

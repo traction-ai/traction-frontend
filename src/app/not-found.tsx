@@ -2,23 +2,36 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-8">
-      <div className="text-center">
-        <h1 className="text-display-xl font-black uppercase tracking-tight">
+    <div className="min-h-screen flex items-center justify-center" style={{ padding: "clamp(32px, 4vw, 64px)" }}>
+      <div className="text-center max-w-[560px]">
+        <p className="swiss-label text-gray-200" style={{ marginBottom: "12px" }}>
+          Not Found
+        </p>
+        <h1 className="text-display font-black uppercase tracking-tight leading-none">
           404
         </h1>
-        <p className="text-heading-sm font-bold uppercase mt-4">
-          Page not found
-        </p>
-        <p className="text-body text-gray-300 mt-3">
+        <p
+          className="text-body-lg text-gray-300 leading-relaxed mx-auto"
+          style={{ marginTop: "16px" }}
+        >
           The page you&apos;re looking for doesn&apos;t exist.
         </p>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center mt-10 px-8 py-4 bg-black text-white text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-gray-400"
-        >
-          Go to Dashboard&nbsp;&nbsp;&rarr;
-        </Link>
+
+        <div style={{ marginTop: "clamp(32px, 4vw, 48px)" }}>
+          <Link
+            href="/projects"
+            className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] hover:bg-accent transition-colors"
+            style={{ padding: "18px 36px", fontSize: "13px", gap: "12px" }}
+          >
+            Go to Projects
+            <span
+              className="inline-block transition-transform group-hover:translate-x-0.5"
+              style={{ fontSize: "16px" }}
+            >
+              &rarr;
+            </span>
+          </Link>
+        </div>
       </div>
     </div>
   );

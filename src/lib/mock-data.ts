@@ -737,7 +737,7 @@ Primary research conducted across 500 freelancers in North America and Europe re
 The competitive landscape includes Wise (dominant in consumer transfers), PayPal (largest in online freelancer payments), and emerging players like Payoneer and Deel that bundle payments with workforce management. However, none of these competitors offer sub-minute settlement combined with multi-currency wallets and integrated invoicing in a single platform.
 
 Geographic analysis indicates that the highest-growth corridors for freelancer payments are US-India, US-Philippines, UK-Nigeria, and EU-Latin America. NovaPay's liquidity network currently covers all four of these corridors, positioning the company well for near-term growth.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:08:00Z",
     updatedAt: "2026-01-10T09:08:00Z",
   },
@@ -753,7 +753,7 @@ Cost structure is dominated by engineering and product development (42% of opera
 Key assumptions include: monthly user growth of 20% through 2026 (decelerating to 12% in 2027), average transaction value of $850, average of 3.2 transactions per user per month, and a premium tier conversion rate of 8%. The model assumes no major regulatory disruptions and continued expansion of the currency corridor network.
 
 The company expects to reach EBITDA breakeven in Q3 2027, with a cash runway of 24 months post-Series A. Capital efficiency is strong, with a projected LTV:CAC ratio of 5.2x by end of 2026. The burn multiple (net burn divided by net new ARR) is projected at 1.8x, well within the healthy range for a company at this stage.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:09:00Z",
     updatedAt: "2026-01-10T09:09:00Z",
   },
@@ -769,7 +769,7 @@ The allocation of funds is as follows: 40% ($4.8M) will go toward engineering an
 Another 25% ($3M) will fund sales and marketing, with a focus on content marketing targeted at freelancer communities, partnership programs with freelance platforms like Upwork and Toptal, and a referral program that has already shown a 3.2x viral coefficient in early testing. The remaining 10% ($1.2M) covers operational expenses including office space, legal, and financial administration.
 
 Post-raise, the company will have approximately 24 months of runway at projected burn rates, providing sufficient time to reach EBITDA breakeven or raise a subsequent round from a position of strength. The dilution from this round is expected to be approximately 18-20% on a fully diluted basis.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:10:00Z",
     updatedAt: "2026-01-10T09:10:00Z",
   },
@@ -785,7 +785,7 @@ Phase 1 (Q1-Q2 2026) focuses on platform hardening and enterprise readiness. Key
 Phase 2 (Q3-Q4 2026) centers on geographic expansion and financial products. The platform will add 12 new currency corridors, with priority given to Southeast Asian and Latin American markets. New financial features include virtual IBANs for European users, instant local payout options (ACH, SEPA, Faster Payments), and a basic savings feature allowing users to earn yield on idle balances. A partnership SDK will enable freelance marketplaces to embed NovaPay payments directly.
 
 Phase 3 (H1 2027) introduces advanced AI-powered features. These include intelligent FX hedging recommendations based on a user's transaction patterns, automated cash flow forecasting for freelancers, and smart invoice generation that pre-fills terms and amounts based on client history. The team also plans to launch NovaPay Business, a dedicated product for agencies and small businesses with team management, approval workflows, and consolidated reporting.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:11:00Z",
     updatedAt: "2026-01-10T09:11:00Z",
   },
@@ -803,7 +803,7 @@ PayPal remains the default payment method for many freelancers due to its ubiqui
 Payoneer targets freelancers and marketplace sellers but primarily through platform integrations rather than direct-to-freelancer relationships. Their fee structure is competitive (1-2%) but lacks the transparency of NovaPay's flat rate. Deel and Remote.com offer payment services bundled with contractor management, targeting the employer side rather than the freelancer. This creates an opportunity for NovaPay to be the freelancer's preferred receiving platform.
 
 NovaPay's defensible advantages include its proprietary liquidity network (built over 18 months with 22 banking partners), its focus on freelancer-specific workflows, and its growing network effects as more clients and freelancers transact on the platform.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:12:00Z",
     updatedAt: "2026-01-10T09:12:00Z",
   },
@@ -819,7 +819,7 @@ The company was founded in 2024 by Sarah Lin (former VP Product at Stripe) and M
 The total addressable market for cross-border B2B payments is $2.8 trillion, with the freelancer and SMB segment representing a $420 billion opportunity growing at 14% annually. NovaPay is well-positioned to capture this market through its proprietary liquidity network, transparent pricing, and integrated freelancer workflow tools.
 
 The company is raising a $12M Series A to expand its engineering team, secure regulatory licenses in new markets, and scale its go-to-market efforts. With a confirmed lead investor, the round is expected to close in March 2026. Proceeds will provide 24 months of runway, sufficient to reach projected EBITDA breakeven in Q3 2027.`,
-    status: "ready",
+    status: "pending",
     createdAt: "2026-01-10T09:13:00Z",
     updatedAt: "2026-01-10T09:13:00Z",
   },
@@ -1042,6 +1042,10 @@ export function getProjectById(id: string): Project | undefined {
 
 export function getDocumentsByProjectId(projectId: string): ProjectDocument[] {
   return documents.filter((d) => d.projectId === projectId);
+}
+
+export function getDocumentById(documentId: string): ProjectDocument | undefined {
+  return documents.find((d) => d.id === documentId);
 }
 
 export function getChatMessages(projectId: string): ChatMessage[] {

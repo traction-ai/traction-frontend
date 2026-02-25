@@ -1,35 +1,108 @@
-import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
 import type { ProjectDocument } from "@/types";
+import Link from "next/link";
 
 interface DocumentListProps {
   documents: ProjectDocument[];
+  readyDocIds?: Set<string>;
   onSelect?: (doc: ProjectDocument) => void;
 }
 
-export function DocumentList({ documents, onSelect }: DocumentListProps) {
+const DOC_TYPE_ABBREV: Record<string, string> = {
+  "product-description": "PD",
+  "timeline": "TL",
+  "swot-analysis": "SW",
+  "market-research": "MR",
+  "financial-projections": "FP",
+  "funding-requirements": "FR",
+  "product-forecast": "PF",
+  "competitive-analysis": "CA",
+  "executive-summary": "ES",
+};
+
+export function DocumentList({ documents, readyDocIds }: DocumentListProps) {
   return (
-    <div className="divide-y divide-gray-100">
-      {documents.map((doc) => (
-        <button
-          key={doc.id}
-          onClick={() => onSelect?.(doc)}
-          className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#fafafa]"
-        >
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-bold truncate">{doc.title}</p>
-            <p className="text-[11px] text-gray-200 mt-1">
-              {formatDate(doc.updatedAt)}
-            </p>
+    <div>
+      {documents.map((doc, i) => {
+        const isReady = readyDocIds ? readyDocIds.has(doc.id) : doc.status === "ready";
+        const abbrev = DOC_TYPE_ABBREV[doc.type] || "??";
+
+        const inner = (
+          <>
+            {/* Check circle */}
+            <div className="flex-shrink-0">
+              {isReady ? (
+                <div
+                  className="flex items-center justify-center bg-black text-white"
+                  style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M2.5 6L5 8.5L9.5 3.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              ) : (
+                <div
+                  className="border border-gray-200"
+                  style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+                />
+              )}
+            </div>
+
+            {/* Document info */}
+            <div className="min-w-0 flex-1">
+              <p
+                className={`text-[13px] font-bold truncate leading-tight ${
+                  isReady ? "text-black" : "text-gray-400"
+                }`}
+              >
+                {doc.title}
+              </p>
+            </div>
+
+            {/* Type abbreviation */}
+            <span
+              className={`text-[10px] font-mono tracking-wider flex-shrink-0 ${
+                isReady ? "text-black" : "text-gray-200"
+              }`}
+            >
+              {abbrev}
+            </span>
+          </>
+        );
+
+        const rowStyle = {
+          padding: "14px 20px",
+          gap: "14px",
+          borderBottom: i < documents.length - 1 ? "1px solid #f0f0f0" : "none",
+        };
+
+        return isReady ? (
+          <Link
+            key={doc.id}
+            href={`/projects/${doc.projectId}/documents/${doc.id}?from=dashboard`}
+            className="flex items-center hover:bg-[#fafafa] transition-colors group"
+            style={rowStyle}
+          >
+            {inner}
+          </Link>
+        ) : (
+          <div
+            key={doc.id}
+            className="flex items-center opacity-60 cursor-default"
+            style={rowStyle}
+          >
+            {inner}
           </div>
-          <Badge variant={doc.status} className="ml-4 flex-shrink-0">
-            {doc.status}
-          </Badge>
-        </button>
-      ))}
+        );
+      })}
 
       {documents.length === 0 && (
-        <div className="px-5 py-12 text-center">
+        <div className="text-center" style={{ padding: "48px 24px" }}>
           <p className="text-[13px] text-gray-200">
             No documents generated yet.
           </p>

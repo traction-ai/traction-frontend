@@ -35,7 +35,7 @@ export interface ProjectDocument {
   type: DocumentType;
   title: string;
   content: string;
-  status: "generating" | "ready" | "error";
+  status: "generating" | "ready" | "error" | "pending";
   createdAt: string;
   updatedAt: string;
 }

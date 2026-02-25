@@ -7,20 +7,36 @@ interface ErrorProps {
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-8">
-      <div className="text-center">
-        <h1 className="text-heading-lg font-black uppercase">
+    <div className="min-h-screen flex items-center justify-center" style={{ padding: "clamp(32px, 4vw, 64px)" }}>
+      <div className="text-center max-w-[560px]">
+        <p className="swiss-label text-gray-200" style={{ marginBottom: "12px" }}>
+          Error
+        </p>
+        <h1 className="text-display font-black uppercase tracking-tight leading-none">
           Something went wrong
         </h1>
-        <p className="text-body text-gray-300 mt-4 max-w-md mx-auto">
+        <p
+          className="text-body-lg text-gray-300 leading-relaxed mx-auto"
+          style={{ marginTop: "16px" }}
+        >
           {error.message || "An unexpected error occurred. Please try again."}
         </p>
-        <button
-          onClick={reset}
-          className="inline-flex items-center mt-10 px-8 py-4 bg-black text-white text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-gray-400"
-        >
-          Try Again&nbsp;&nbsp;&rarr;
-        </button>
+
+        <div style={{ marginTop: "clamp(32px, 4vw, 48px)" }}>
+          <button
+            onClick={reset}
+            className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] hover:bg-accent transition-colors"
+            style={{ padding: "18px 36px", fontSize: "13px", gap: "12px" }}
+          >
+            Try Again
+            <span
+              className="inline-block transition-transform group-hover:translate-x-0.5"
+              style={{ fontSize: "16px" }}
+            >
+              &rarr;
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

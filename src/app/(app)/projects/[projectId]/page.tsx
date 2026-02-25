@@ -2,7 +2,6 @@ import {
   getProjectById,
   getDocumentsByProjectId,
   getChatMessages,
-  getFeedbackItems,
 } from "@/lib/mock-data";
 import { WorkspaceClient } from "./workspace-client";
 import Link from "next/link";
@@ -31,14 +30,12 @@ export default async function ProjectWorkspacePage({ params }: Props) {
 
   const documents = getDocumentsByProjectId(projectId);
   const messages = getChatMessages(projectId);
-  const feedback = getFeedbackItems(projectId);
 
   return (
     <WorkspaceClient
       project={project}
       documents={documents}
       initialMessages={messages}
-      feedback={feedback}
     />
   );
 }

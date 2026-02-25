@@ -56,7 +56,7 @@ export default function SignupPage() {
 
       setLoading(true);
       timeoutRef.current = setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/projects");
       }, 1000);
     },
     [name, email, password, confirmPassword, router]
