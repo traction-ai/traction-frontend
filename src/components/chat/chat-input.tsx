@@ -67,11 +67,17 @@ export function ChatInput({
       <button
         type="submit"
         disabled={!value.trim() || disabled}
-        className="flex-shrink-0 bg-black text-white font-bold uppercase tracking-[0.1em] disabled:opacity-15 hover:bg-accent transition-colors"
+        className="group inline-flex items-center flex-shrink-0 bg-black text-white font-bold uppercase tracking-[0.1em] disabled:opacity-15 hover:bg-accent transition-colors"
         style={{ padding: "18px 32px", fontSize: "13px" }}
         aria-label="Send message"
       >
-        Send&ensp;&rarr;
+        Send
+        <span
+          className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+          style={{ fontSize: "18px" }}
+        >
+          &rarr;
+        </span>
       </button>
     </form>
   );

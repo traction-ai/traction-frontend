@@ -13,10 +13,8 @@
 - [Documents](#3-documents)
 - [Chat Messages](#4-chat-messages)
 - [Deck Generation](#5-deck-generation)
-- [AI Suggestions](#6-ai-suggestions)
-- [Feedback](#7-feedback)
-- [Share Links](#8-share-links)
-- [Composite (Page) Endpoints](#9-composite-page-endpoints)
+- [Share Links](#6-share-links)
+- [Composite (Page) Endpoints](#7-composite-page-endpoints)
 - [Error Responses](#error-responses)
 
 ---
@@ -55,7 +53,7 @@ These match the existing TypeScript interfaces in `src/types/index.ts`.
   "userId": "string",
   "name": "string",
   "prompt": "string",
-  "status": "generating" | "draft" | "finalized" | "shared",
+  "status": "generating" | "draft" | "shared",
   "slidesHtml": ["string"],
   "fullHtml": "string | null",
   "thumbnailUrl": "string | null",
@@ -87,35 +85,6 @@ These match the existing TypeScript interfaces in `src/types/index.ts`.
   "projectId": "string",
   "role": "user" | "assistant",
   "content": "string",
-  "createdAt": "string (ISO 8601)"
-}
-```
-
-### AiSuggestion
-
-```json
-{
-  "id": "string",
-  "projectId": "string",
-  "target": "slide" | "document" | "general",
-  "targetId": "string | null",
-  "description": "string",
-  "status": "pending" | "applied" | "dismissed"
-}
-```
-
-### Feedback
-
-```json
-{
-  "id": "string",
-  "projectId": "string",
-  "slideIndex": "number | null",
-  "documentId": "string | null",
-  "selectedText": "string",
-  "userComment": "string",
-  "resolution": "string | null",
-  "status": "pending" | "applied" | "dismissed",
   "createdAt": "string (ISO 8601)"
 }
 ```
@@ -237,7 +206,7 @@ List all projects for the authenticated user.
 
 | Param    | Type   | Default    | Description                                      |
 |----------|--------|------------|--------------------------------------------------|
-| `status` | string | `"all"`    | Filter: `all`, `generating`, `draft`, `finalized`, `shared` |
+| `status` | string | `"all"`    | Filter: `all`, `generating`, `draft`, `shared` |
 | `sort`   | string | `"recent"` | Sort: `recent`, `name`, `status`                 |
 
 **Response (200):**
@@ -283,7 +252,7 @@ Note: The returned project will have `status: "generating"`, empty `slidesHtml: 
 
 Get a single project by ID.
 
-**Used by:** Workspace page, Finalize page, Documents pages
+**Used by:** Workspace page, Documents pages
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -301,7 +270,7 @@ Get a single project by ID.
 
 Update project fields (name, status).
 
-**Used by:** Finalize page ("Finalize & Share" button changes status)
+**Used by:** Workspace "Share" flow (changes status)
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -310,7 +279,7 @@ Update project fields (name, status).
 ```json
 {
   "name": "string (optional)",
-  "status": "draft" | "finalized" | "shared" (optional)
+  "status": "draft" | "shared" (optional)
 }
 ```
 
@@ -340,7 +309,7 @@ Delete a project and all associated data.
 
 List all documents for a project.
 
-**Used by:** Workspace (document checklist), Documents page, Finalize page, Share page
+**Used by:** Workspace (document checklist), Documents page, Share page
 
 **Headers:** `Authorization: Bearer <token>` (not required for share view)
 
@@ -378,7 +347,7 @@ Get a single document by ID.
 
 Get all chat messages for a project.
 
-**Used by:** Workspace chat panel, Finalize chat panel
+**Used by:** Workspace chat panel
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -528,135 +497,13 @@ All returned documents will have `status: "generating"` or `status: "pending"`. 
 
 ---
 
-## 6. AI Suggestions
-
-### GET /projects/:projectId/suggestions
-
-Get AI-generated suggestions for a project.
-
-**Used by:** Finalize page (SuggestionsPanel component)
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Response (200):**
-
-```json
-{
-  "suggestions": [AiSuggestion]
-}
-```
-
----
-
-### PATCH /suggestions/:suggestionId
-
-Update the status of a suggestion (apply or dismiss).
-
-**Used by:** Finalize page — "Apply" and "Dismiss" buttons in SuggestionsPanel
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Request:**
-
-```json
-{
-  "status": "applied" | "dismissed"
-}
-```
-
-**Response (200):**
-
-```json
-{
-  "suggestion": AiSuggestion
-}
-```
-
----
-
-## 7. Feedback
-
-### GET /projects/:projectId/feedback
-
-Get all feedback items for a project.
-
-**Used by:** Feedback panel (exists in types, component scaffolded)
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Response (200):**
-
-```json
-{
-  "feedback": [Feedback]
-}
-```
-
----
-
-### POST /projects/:projectId/feedback
-
-Create a new feedback item (from text selection on a slide or document).
-
-**Used by:** Feedback panel
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Request:**
-
-```json
-{
-  "slideIndex": "number | null",
-  "documentId": "string | null",
-  "selectedText": "string (required)",
-  "userComment": "string (required)"
-}
-```
-
-**Response (201):**
-
-```json
-{
-  "feedback": Feedback
-}
-```
-
----
-
-### PATCH /feedback/:feedbackId
-
-Update feedback status (apply or dismiss).
-
-**Used by:** Feedback item actions
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Request:**
-
-```json
-{
-  "status": "applied" | "dismissed",
-  "resolution": "string | null"
-}
-```
-
-**Response (200):**
-
-```json
-{
-  "feedback": Feedback
-}
-```
-
----
-
-## 8. Share Links
+## 6. Share Links
 
 ### POST /projects/:projectId/share
 
 Create or get the share link for a project. Also sets the project status to `"shared"`.
 
-**Used by:** Workspace "Share" button, Finalize "Finalize & Share" button
+**Used by:** Workspace "Share" button
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -729,7 +576,7 @@ Note: The public response intentionally omits sensitive fields like `userId`, `p
 
 ---
 
-## 9. Composite (Page) Endpoints
+## 7. Composite (Page) Endpoints
 
 These bundle multiple resources into a single response, optimized for specific pages that need several data types at once.
 
@@ -757,33 +604,6 @@ Everything the workspace page needs in one call.
 - `project` → `WorkspaceClient.project`
 - `documents` → `WorkspaceClient.documents`
 - `messages` → `WorkspaceClient.initialMessages`
-
----
-
-### GET /pages/finalize/:projectId
-
-Everything the finalization page needs.
-
-**Used by:** `/projects/[projectId]/finalize` page (server component)
-
-**Headers:** `Authorization: Bearer <token>`
-
-**Response (200):**
-
-```json
-{
-  "project": Project,
-  "documents": [ProjectDocument],
-  "messages": [ChatMessage],
-  "suggestions": [AiSuggestion]
-}
-```
-
-**Frontend mapping:**
-- `project` → `FinalizeClient.project`
-- `documents` → `FinalizeClient.documents`
-- `messages` → `FinalizeClient.messages`
-- `suggestions` → `FinalizeClient.suggestions`
 
 ---
 
@@ -872,13 +692,7 @@ This `fields` map matches the frontend's `errors` state objects in the login/sig
 | POST   | `/projects/:projectId/messages`         | Yes  | Send message + get AI response       |
 | POST   | `/projects/:projectId/generate-deck`    | Yes  | Generate/regenerate pitch deck       |
 | POST   | `/projects/:projectId/generate-documents` | Yes | Trigger document generation         |
-| GET    | `/projects/:projectId/suggestions`      | Yes  | List AI suggestions                  |
-| PATCH  | `/suggestions/:suggestionId`            | Yes  | Apply/dismiss suggestion             |
-| GET    | `/projects/:projectId/feedback`         | Yes  | List feedback items                  |
-| POST   | `/projects/:projectId/feedback`         | Yes  | Create feedback                      |
-| PATCH  | `/feedback/:feedbackId`                 | Yes  | Update feedback status               |
 | POST   | `/projects/:projectId/share`            | Yes  | Create share link                    |
 | GET    | `/share/:projectId`                     | No   | Public share view                    |
 | GET    | `/pages/workspace/:projectId`           | Yes  | Composite: workspace page data       |
-| GET    | `/pages/finalize/:projectId`            | Yes  | Composite: finalize page data        |
 | GET    | `/pages/documents/:projectId`           | Yes  | Composite: documents page data       |

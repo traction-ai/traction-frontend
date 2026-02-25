@@ -113,9 +113,9 @@ export function DashboardClient() {
                 <button
                     onClick={() => setIsPitchdeckView(!isPitchdeckView)}
                     className="group relative flex items-center border border-black text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-black hover:text-white transition-colors duration-200 flex-shrink-0"
-                    style={{ padding: "18px 36px", gap: "14px" }}
+                    style={{ padding: "18px 36px" }}
                 >
-                    <span className="relative flex" style={{ width: "10px", height: "10px" }}>
+                    <span className="relative flex" style={{ width: "10px", height: "10px", marginRight: "14px" }}>
                         <span
                             className="animate-ping absolute inset-0 bg-accent opacity-75"
                             style={{ borderRadius: "50%" }}
@@ -127,8 +127,8 @@ export function DashboardClient() {
                     </span>
                     {isPitchdeckView ? "Chat" : "Pitchdeck"}
                     <span
-                        className="inline-block transition-transform group-hover:translate-x-0.5"
-                        style={{ fontSize: "16px" }}
+                        className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+                        style={{ fontSize: "18px" }}
                     >
                         &rarr;
                     </span>

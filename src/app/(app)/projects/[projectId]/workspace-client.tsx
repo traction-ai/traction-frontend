@@ -100,12 +100,12 @@ export function WorkspaceClient({
                 ? "group inline-flex items-center bg-accent text-white font-bold uppercase tracking-[0.1em] hover:bg-black transition-colors flex-shrink-0"
                 : "inline-flex items-center bg-gray-100 text-gray-300 font-bold uppercase tracking-[0.1em] cursor-not-allowed flex-shrink-0"
             }
-            style={{ padding: "14px 28px", fontSize: "12px", gap: "10px" }}
+            style={{ padding: "14px 28px", fontSize: "12px" }}
           >
             Pitchdeck
             <span
-              className={allReady ? "inline-block transition-transform group-hover:translate-x-0.5" : "inline-block"}
-              style={{ fontSize: "15px" }}
+              className={allReady ? "inline-block ml-4 transition-transform group-hover:translate-x-1" : "inline-block ml-4"}
+              style={{ fontSize: "16px" }}
             >
               &rarr;
             </span>
@@ -114,12 +114,12 @@ export function WorkspaceClient({
             <Link
               href={`/share/${project.id}`}
               className="group inline-flex items-center border border-black text-black font-bold uppercase tracking-[0.1em] hover:bg-black hover:text-white transition-colors flex-shrink-0"
-              style={{ padding: "14px 28px", fontSize: "12px", gap: "10px" }}
+              style={{ padding: "14px 28px", fontSize: "12px" }}
             >
               Share
               <span
-                className="inline-block transition-transform group-hover:translate-x-0.5"
-                style={{ fontSize: "15px" }}
+                className="inline-block ml-4 transition-transform group-hover:translate-x-1"
+                style={{ fontSize: "16px" }}
               >
                 &rarr;
               </span>
@@ -127,10 +127,10 @@ export function WorkspaceClient({
           ) : (
             <span
               className="inline-flex items-center border border-gray-200 text-gray-300 font-bold uppercase tracking-[0.1em] cursor-not-allowed flex-shrink-0"
-              style={{ padding: "14px 28px", fontSize: "12px", gap: "10px" }}
+              style={{ padding: "14px 28px", fontSize: "12px" }}
             >
               Share
-              <span className="inline-block" style={{ fontSize: "15px" }}>
+              <span className="inline-block ml-4" style={{ fontSize: "16px" }}>
                 &rarr;
               </span>
             </span>
@@ -215,10 +215,10 @@ export function WorkspaceClient({
           <div className="absolute top-0 left-0 z-10 group/back" style={{ width: "160px", height: "80px" }}>
             <button
               onClick={() => setDeckFullscreen(false)}
-              className="absolute top-6 left-6 inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.1em] hover:bg-accent transition-all opacity-0 group-hover/back:opacity-100 duration-200"
-              style={{ padding: "14px 28px", fontSize: "12px", gap: "10px" }}
+              className="group absolute top-6 left-6 inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.1em] hover:bg-accent transition-all opacity-0 group-hover/back:opacity-100 duration-200"
+              style={{ padding: "14px 28px", fontSize: "12px" }}
             >
-              <span style={{ fontSize: "16px" }}>&larr;</span>
+              <span className="inline-block mr-4" style={{ fontSize: "16px" }}>&larr;</span>
               Back
             </button>
           </div>

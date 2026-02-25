@@ -21,12 +21,12 @@ export default function NotFound() {
           <Link
             href="/projects"
             className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] hover:bg-accent transition-colors"
-            style={{ padding: "18px 36px", fontSize: "13px", gap: "12px" }}
+            style={{ padding: "18px 36px", fontSize: "13px" }}
           >
             Go to Projects
             <span
-              className="inline-block transition-transform group-hover:translate-x-0.5"
-              style={{ fontSize: "16px" }}
+              className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+              style={{ fontSize: "18px" }}
             >
               &rarr;
             </span>

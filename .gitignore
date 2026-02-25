@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+docs/api-schemas.md
+docs/api-schemas.md
+docs/plans/2026-02-25-llm-seo-design.md
+docs/plans/2026-02-25-llm-seo-implementation.md
+docs/api-schemas.md

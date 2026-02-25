@@ -43,7 +43,7 @@ export function PromptInput() {
           >
             Initialize
             <span
-              className="inline-block ml-3 transition-transform group-hover:translate-x-1"
+              className="inline-block ml-4 transition-transform group-hover:translate-x-1"
               style={{ fontSize: "16px" }}
             >
               &rarr;

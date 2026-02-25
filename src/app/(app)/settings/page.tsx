@@ -50,8 +50,8 @@ export default function SettingsPage() {
             >
               Update Profile
               <span
-                className="inline-block ml-4 transition-transform group-hover:translate-x-1"
-                style={{ fontSize: "16px" }}
+                className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+                style={{ fontSize: "18px" }}
               >
                 &rarr;
               </span>

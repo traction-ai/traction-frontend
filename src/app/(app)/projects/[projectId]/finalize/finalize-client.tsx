@@ -44,9 +44,8 @@ export function FinalizeClient({
               <Link
                 href={`/projects/${project.id}`}
                 className="inline-flex items-center text-[13px] font-bold uppercase tracking-[0.08em] text-gray-200 hover:text-black transition-colors"
-                style={{ gap: "10px" }}
               >
-                <span style={{ fontSize: "16px" }}>&larr;</span>
+                <span className="inline-block mr-4" style={{ fontSize: "16px" }}>&larr;</span>
                 Back to Workspace
               </Link>
               <h1
@@ -65,12 +64,12 @@ export function FinalizeClient({
 
             <button
               className="group inline-flex items-center bg-accent text-white font-bold uppercase tracking-[0.1em] hover:bg-black transition-colors flex-shrink-0"
-              style={{ padding: "20px 40px", fontSize: "14px", gap: "14px" }}
+              style={{ padding: "20px 40px", fontSize: "14px" }}
             >
               Finalize &amp; Share
               <span
-                className="inline-block transition-transform group-hover:translate-x-0.5"
-                style={{ fontSize: "18px" }}
+                className="inline-block ml-6 transition-transform group-hover:translate-x-1"
+                style={{ fontSize: "20px" }}
               >
                 &rarr;
               </span>

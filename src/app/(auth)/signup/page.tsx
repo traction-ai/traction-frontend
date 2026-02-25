@@ -136,8 +136,8 @@ export default function SignupPage() {
           >
             {loading ? "Creating..." : "Create Account"}
             <span
-              className="inline-block ml-5 transition-transform group-hover:translate-x-1"
-              style={{ fontSize: "18px" }}
+              className="inline-block ml-6 transition-transform group-hover:translate-x-1"
+              style={{ fontSize: "20px" }}
             >
               &rarr;
             </span>

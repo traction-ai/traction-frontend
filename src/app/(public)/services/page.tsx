@@ -57,10 +57,16 @@ export default function ServicesPage() {
           <div className="hidden md:flex items-center h-full flex-shrink-0 border-l hairline-dark">
             <Link
               href="/signup"
-              className="flex items-center h-full bg-black text-white swiss-label hover:bg-gray-400 transition-colors whitespace-nowrap"
+              className="group flex items-center h-full bg-black text-white swiss-label hover:bg-gray-400 transition-colors whitespace-nowrap"
               style={{ padding: "0 clamp(32px, 3vw, 64px)" }}
             >
-              Start Project&ensp;&rarr;
+              Start Project
+              <span
+                className="inline-block ml-5 transition-transform group-hover:translate-x-1"
+                style={{ fontSize: "18px" }}
+              >
+                &rarr;
+              </span>
             </Link>
           </div>
         </div>
