@@ -35,8 +35,8 @@ export default function AuthLayout({
       {/* Two-column layout */}
       <div className="flex-1 flex">
         {/* Left: form */}
-        <div className="flex-1 flex items-center justify-center bg-[#fafafa]" style={{ padding: "0 clamp(32px, 4vw, 80px)" }}>
-          <div className="w-full max-w-[480px] py-16 lg:py-20">
+        <div className="flex-1 flex items-center justify-center bg-[#fafafa]" style={{ padding: "0 clamp(40px, 5vw, 96px)" }}>
+          <div className="w-full max-w-[560px]" style={{ padding: "clamp(40px, 5vw, 80px) 0" }}>
             {children}
           </div>
         </div>

@@ -49,13 +49,14 @@ export default function LoginPage() {
       <h1 className="text-heading-lg font-black uppercase tracking-tight animate-fade-up">
         Log In
       </h1>
-      <p className="text-body text-gray-300 mt-3 animate-fade-up delay-1">
+      <p className="text-body-lg text-gray-300 animate-fade-up delay-1" style={{ marginTop: "16px" }}>
         Enter your credentials to continue.
       </p>
 
       <form
         onSubmit={handleSubmit}
-        className="mt-12 space-y-8"
+        className="flex flex-col"
+        style={{ marginTop: "clamp(32px, 4vw, 56px)", gap: "clamp(28px, 3vw, 40px)" }}
         noValidate
       >
         <div className="animate-fade-up delay-2">
@@ -82,12 +83,12 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="animate-fade-up delay-4">
+        <div className="animate-fade-up delay-4" style={{ marginTop: "8px" }}>
           <button
             type="submit"
             disabled={loading}
             className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] disabled:opacity-25 hover:bg-accent transition-colors"
-            style={{ padding: "20px 40px", fontSize: "14px" }}
+            style={{ padding: "22px 44px", fontSize: "14px" }}
           >
             {loading ? "Logging in..." : "Log In"}
             <span
@@ -100,7 +101,7 @@ export default function LoginPage() {
         </div>
       </form>
 
-      <p className="mt-10 text-body-sm text-gray-300 animate-fade-up delay-5">
+      <p className="text-body text-gray-300 animate-fade-up delay-5" style={{ marginTop: "clamp(24px, 3vw, 40px)" }}>
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"

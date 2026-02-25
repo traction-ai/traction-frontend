@@ -69,13 +69,14 @@ export default function SignupPage() {
         <br />
         Account
       </h1>
-      <p className="text-body text-gray-300 mt-3 animate-fade-up delay-1">
+      <p className="text-body-lg text-gray-300 animate-fade-up delay-1" style={{ marginTop: "16px" }}>
         Start building investor-ready pitch decks.
       </p>
 
       <form
         onSubmit={handleSubmit}
-        className="mt-12 space-y-8"
+        className="flex flex-col"
+        style={{ marginTop: "clamp(32px, 4vw, 56px)", gap: "clamp(28px, 3vw, 40px)" }}
         noValidate
       >
         <div className="animate-fade-up delay-2">
@@ -126,12 +127,12 @@ export default function SignupPage() {
           />
         </div>
 
-        <div className="animate-fade-up delay-6">
+        <div className="animate-fade-up delay-6" style={{ marginTop: "8px" }}>
           <button
             type="submit"
             disabled={loading}
             className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] disabled:opacity-25 hover:bg-accent transition-colors"
-            style={{ padding: "20px 40px", fontSize: "14px" }}
+            style={{ padding: "22px 44px", fontSize: "14px" }}
           >
             {loading ? "Creating..." : "Create Account"}
             <span
@@ -144,7 +145,7 @@ export default function SignupPage() {
         </div>
       </form>
 
-      <p className="mt-10 text-body-sm text-gray-300 animate-fade-up delay-7">
+      <p className="text-body text-gray-300 animate-fade-up delay-7" style={{ marginTop: "clamp(24px, 3vw, 40px)" }}>
         Already have an account?{" "}
         <Link
           href="/login"
