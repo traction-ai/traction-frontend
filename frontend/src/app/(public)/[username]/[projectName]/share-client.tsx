@@ -1,9 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getPublicProject } from "@/lib/api";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import type { PublicProjectResponse, ProjectDocument } from "@/types";
+
+/**
+ * Inject CSS into deck HTML to fix overlay stacking issues in LLM-generated decks.
+ */
+function fixOverlayStacking(html: string): string {
+  const fixStyles = `<style data-deck-fix>
+[class*="overlay"] {
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+.slide-content,
+[class*="slide-content"],
+.slide > [class*="content"]:not([class*="overlay"]) {
+  z-index: 2 !important;
+  position: relative !important;
+}
+.controls-bar, .keyboard-hint, .progress, .slide-counter, .progress-dots {
+  z-index: 100 !important;
+}
+</style>`;
+
+  if (html.includes("</head>")) {
+    return html.replace("</head>", fixStyles + "</head>");
+  }
+  if (html.includes("</body>")) {
+    return html.replace("</body>", fixStyles + "</body>");
+  }
+  return html + fixStyles;
+}
 
 type Phase = "deck" | "documents" | "document";
 
@@ -25,6 +54,11 @@ export function PublicShareClient({ username, projectName }: { username: string;
   const [error, setError] = useState("");
   const [phase, setPhase] = useState<Phase>("deck");
   const [selectedDoc, setSelectedDoc] = useState<ProjectDocument | null>(null);
+  const [deckLoaded, setDeckLoaded] = useState(false);
+
+  const handleDeckLoad = useCallback(() => {
+    setDeckLoaded(true);
+  }, []);
 
   useEffect(() => {
     getPublicProject(username, projectName)
@@ -62,12 +96,21 @@ export function PublicShareClient({ username, projectName }: { username: string;
     return (
       <div className="min-h-screen bg-black relative">
         {project.full_html ? (
-          <iframe
-            srcDoc={project.full_html}
-            sandbox="allow-scripts allow-same-origin"
-            className="w-full h-screen border-0"
-            title={`${project.name} pitch deck`}
-          />
+          <>
+            {!deckLoaded && (
+              <div className="absolute inset-0 bg-white flex items-center justify-center z-10">
+                <div className="w-16 h-0.5 bg-black animate-pulse" />
+              </div>
+            )}
+            <iframe
+              srcDoc={fixOverlayStacking(project.full_html)}
+              sandbox="allow-scripts allow-same-origin"
+              className="w-full h-screen border-0"
+              style={{ display: "block", background: "white", opacity: deckLoaded ? 1 : 0 }}
+              title={`${project.name} pitch deck`}
+              onLoad={handleDeckLoad}
+            />
+          </>
         ) : (
           <div className="flex items-center justify-center h-screen">
             <p className="text-white/40 text-[14px]">No deck generated yet.</p>
