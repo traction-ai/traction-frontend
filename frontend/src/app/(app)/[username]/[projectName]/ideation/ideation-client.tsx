@@ -72,11 +72,19 @@ export function IdeationClient({ username, projectName }: IdeationClientProps) {
   const handleExtractionUpdate = useCallback((state: ExtractionState, complete: boolean) => {
     setExtractionState(state);
     setAllComplete(complete);
-  }, []);
+    // Backend creates documents during chat; re-fetch so the sidebar updates
+    if (project) {
+      getProjectDocuments(project.id).then(setDocuments).catch(() => {});
+    }
+  }, [project]);
 
-  const handleDesignGenerated = useCallback((updatedProject: Project) => {
-    setProject(updatedProject);
-  }, []);
+  const handleDesignGenerated = useCallback((updatedProject: Partial<Project>) => {
+    setProject((prev) => prev ? { ...prev, ...updatedProject } : prev);
+    // Re-fetch documents after design generation updates their content
+    if (project) {
+      getProjectDocuments(project.id).then(setDocuments).catch(() => {});
+    }
+  }, [project]);
 
   const handleModeChange = useCallback(async (newMode: "doc" | "design") => {
     const previousMode = mode;
