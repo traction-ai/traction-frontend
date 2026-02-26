@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { logout as apiLogout } from "@/lib/api";
 import type { User } from "@/types";
 
 interface AuthContextValue {
@@ -21,10 +22,11 @@ export function AuthProvider({
   const router = useRouter();
 
   const logout = useCallback(async () => {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "https://api.traction-ai.me"}/api/v1/auth/logout`,
-      { method: "POST", credentials: "include" }
-    );
+    try {
+      await apiLogout();
+    } catch {
+      // Redirect to login even if the logout API call fails
+    }
     router.push("/login");
   }, [router]);
 

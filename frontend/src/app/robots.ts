@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/share/"],
-        disallow: ["/dashboard/", "/projects/", "/documents/", "/settings/", "/login", "/signup"],
+        allow: ["/"],
+        disallow: ["/dashboard/", "/settings/", "/login", "/signup"],
       },
     ],
     sitemap: "https://traction-ai.me/sitemap.xml",

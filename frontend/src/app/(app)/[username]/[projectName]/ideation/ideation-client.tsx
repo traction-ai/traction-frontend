@@ -37,13 +37,13 @@ export function IdeationClient({ username, projectName }: IdeationClientProps) {
   // Load project data
   useEffect(() => {
     const name = projectName.replace(/-/g, " ");
-    Promise.all([
-      getProjectByName(name),
-      getProjectByName(name).then((p) =>
-        Promise.all([getProjectDocuments(p.id), getMessages(p.id)])
-      ),
-    ])
-      .then(([proj, [docs, msgs]]) => {
+    getProjectByName(name)
+      .then((proj) =>
+        Promise.all([getProjectDocuments(proj.id), getMessages(proj.id)]).then(
+          ([docs, msgs]) => ({ proj, docs, msgs })
+        )
+      )
+      .then(({ proj, docs, msgs }) => {
         setProject(proj);
         setDocuments(docs);
         setMessages(msgs.length > 0 ? msgs : [{
@@ -79,13 +79,16 @@ export function IdeationClient({ username, projectName }: IdeationClientProps) {
   }, []);
 
   const handleModeChange = useCallback(async (newMode: "doc" | "design") => {
+    const previousMode = mode;
     setMode(newMode);
     if (project) {
       try {
         await updateProject(project.id, { mode: newMode });
-      } catch {}
+      } catch {
+        setMode(previousMode);
+      }
     }
-  }, [project]);
+  }, [project, mode]);
 
   const handleShare = useCallback(async () => {
     if (!project) return;
@@ -96,7 +99,9 @@ export function IdeationClient({ username, projectName }: IdeationClientProps) {
       const url = `${window.location.origin}/${username}/${slug}`;
       await navigator.clipboard.writeText(url);
       alert("Share link copied to clipboard!");
-    } catch {}
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to share project");
+    }
   }, [project, username]);
 
   const completedCount = useMemo(() => {

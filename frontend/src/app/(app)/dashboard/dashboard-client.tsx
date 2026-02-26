@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { listProjects, createProject } from "@/lib/api";
 import type { Project } from "@/types";
@@ -19,7 +20,7 @@ export function DashboardClient() {
   useEffect(() => {
     listProjects()
       .then(setProjects)
-      .catch(() => {})
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load projects"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -73,6 +74,10 @@ export function DashboardClient() {
           <div className="flex items-center justify-center" style={{ padding: "64px 0" }}>
             <p className="text-[13px] text-gray-200 uppercase tracking-[0.08em]">Loading...</p>
           </div>
+        ) : error && projects.length === 0 ? (
+          <div className="flex items-center justify-center" style={{ padding: "64px 0" }}>
+            <p className="text-[14px] text-red-500">{error}</p>
+          </div>
         ) : projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center" style={{ padding: "80px 0" }}>
             <p className="text-[16px] text-gray-300" style={{ marginBottom: "24px" }}>
@@ -106,7 +111,7 @@ export function DashboardClient() {
             {projects.map((project) => {
               const slug = project.name.toLowerCase().replace(/\s+/g, "-");
               return (
-                <a
+                <Link
                   key={project.id}
                   href={`/${user.username}/${slug}/ideation`}
                   className="group border border-gray-100 hover:border-black transition-colors"
@@ -142,7 +147,7 @@ export function DashboardClient() {
                       </span>
                     </div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>

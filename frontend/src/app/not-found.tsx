@@ -19,11 +19,11 @@ export default function NotFound() {
 
         <div style={{ marginTop: "clamp(32px, 4vw, 48px)" }}>
           <Link
-            href="/projects"
+            href="/dashboard"
             className="group inline-flex items-center bg-black text-white font-bold uppercase tracking-[0.12em] hover:bg-accent transition-colors"
             style={{ padding: "18px 36px", fontSize: "13px" }}
           >
-            Go to Projects
+            Go to Dashboard
             <span
               className="inline-block ml-5 transition-transform group-hover:translate-x-1"
               style={{ fontSize: "18px" }}

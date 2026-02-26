@@ -28,7 +28,13 @@ export function PublicShareClient({ username, projectName }: { username: string;
   useEffect(() => {
     getPublicProject(username, projectName)
       .then(setData)
-      .catch(() => setError("Project not found"))
+      .catch((err) => {
+        if (err && typeof err === "object" && "status" in err && err.status === 404) {
+          setError("Project not found");
+        } else {
+          setError("Something went wrong. Please try again later.");
+        }
+      })
       .finally(() => setLoading(false));
   }, [username, projectName]);
 
@@ -55,9 +61,11 @@ export function PublicShareClient({ username, projectName }: { username: string;
     return (
       <div className="min-h-screen bg-black relative">
         {project.full_html ? (
-          <div
-            className="w-full h-screen"
-            dangerouslySetInnerHTML={{ __html: project.full_html }}
+          <iframe
+            srcDoc={project.full_html}
+            sandbox="allow-scripts allow-same-origin"
+            className="w-full h-screen border-0"
+            title={`${project.name} pitch deck`}
           />
         ) : (
           <div className="flex items-center justify-center h-screen">

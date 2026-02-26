@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { listSharedProjects } from "@/lib/api";
 import type { Project } from "@/types";
@@ -9,6 +10,7 @@ export default function SharedProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -17,7 +19,7 @@ export default function SharedProjectsPage() {
         setProjects(res.projects);
         setCount(res.count);
       })
-      .catch(() => {})
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load shared projects"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -45,6 +47,10 @@ export default function SharedProjectsPage() {
           <div className="flex items-center justify-center" style={{ padding: "64px 0" }}>
             <p className="text-[13px] text-gray-200 uppercase tracking-[0.08em]">Loading...</p>
           </div>
+        ) : error ? (
+          <div className="flex items-center justify-center" style={{ padding: "64px 0" }}>
+            <p className="text-[14px] text-red-500">{error}</p>
+          </div>
         ) : projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center" style={{ padding: "80px 0" }}>
             <p className="text-[16px] text-gray-300">
@@ -59,7 +65,7 @@ export default function SharedProjectsPage() {
             {projects.map((project) => {
               const slug = project.name.toLowerCase().replace(/\s+/g, "-");
               return (
-                <a
+                <Link
                   key={project.id}
                   href={`/${user.username}/${slug}`}
                   target="_blank"
@@ -82,7 +88,7 @@ export default function SharedProjectsPage() {
                       </span>
                     </div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>
