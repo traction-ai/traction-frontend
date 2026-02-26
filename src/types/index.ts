@@ -1,9 +1,11 @@
 export interface User {
   id: string;
-  name: string;
   email: string;
-  avatarUrl: string | null;
-  createdAt: string;
+  username: string;
+  is_active: boolean;
+  display_name: string | null;
+  avatar_url: string | null;
+  created_at: string;
 }
 
 export interface Project {

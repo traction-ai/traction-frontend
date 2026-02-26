@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
 
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
   return (
@@ -31,6 +32,7 @@ export function AppSidebar() {
   const projectMatch = pathname.match(/^\/projects\/([^/]+)/);
   const projectId = projectMatch ? projectMatch[1] : null;
   const isNewPitch = pathname === "/dashboard";
+  const { user } = useAuth();
 
   // Build context-aware nav items (above divider)
   const topItems: { label: string; href: string; isActive: boolean }[] = [];
@@ -105,9 +107,11 @@ export function AppSidebar() {
 
       {/* User */}
       <div className="border-t hairline" style={{ padding: "20px 28px" }}>
-        <p className="text-[14px] font-semibold text-black">Alex Chen</p>
+        <p className="text-[14px] font-semibold text-black">
+          {user.display_name || user.username}
+        </p>
         <p className="text-[12px] text-gray-200" style={{ marginTop: "4px" }}>
-          alex@example.com
+          {user.email}
         </p>
       </div>
     </aside>

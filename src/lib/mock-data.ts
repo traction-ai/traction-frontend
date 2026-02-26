@@ -14,10 +14,12 @@ import type {
 
 export const currentUser: User = {
   id: "user-1",
-  name: "Alex Chen",
   email: "alex@example.com",
-  avatarUrl: null,
-  createdAt: "2025-09-15T08:00:00Z",
+  username: "alex.chen",
+  is_active: true,
+  display_name: "Alex Chen",
+  avatar_url: null,
+  created_at: "2025-09-15T08:00:00Z",
 };
 
 // ---------------------------------------------------------------------------

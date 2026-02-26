@@ -23,11 +23,11 @@ export default function AuthLayout({
         <div className="flex-1" />
         <div className="hidden md:flex items-center h-full flex-shrink-0 border-l hairline-dark">
           <Link
-            href="/signup"
+            href="/login"
             className="flex items-center h-full bg-black text-white swiss-label hover:bg-gray-400 transition-colors whitespace-nowrap"
             style={{ padding: "0 clamp(32px, 3vw, 64px)" }}
           >
-            Start Project&ensp;&rarr;
+            Sign In&ensp;&rarr;
           </Link>
         </div>
       </header>
