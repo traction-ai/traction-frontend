@@ -1,157 +1,204 @@
 "use client";
 
-import { useState } from "react";
-import { DashboardChatPanel } from "@/components/chat/dashboard-chat-panel";
-import { DeckViewer } from "@/components/deck/deck-viewer";
-
-const MOCK_SLIDES = [
-    `<div style="text-align:center; padding: 60px 40px;">
-    <h1 style="font-size:2.5em; font-weight:900; margin-bottom:0.3em;">Your Startup Pitch</h1>
-    <p style="font-size:1.2em; color:#666; margin-bottom:2em;">AI-Powered Innovation</p>
-    <div style="width:80px; height:3px; background:#0047FF; margin:0 auto 2em;"></div>
-    <p style="font-size:1em; color:#333;">Transforming the industry with intelligent automation</p>
-  </div>`,
-
-    `<div style="text-align:left; padding: 40px 60px;">
-    <h2 style="font-size:2em; font-weight:800; margin-bottom:1em;">The Problem</h2>
-    <ul style="font-size:1em; line-height:2; color:#333; list-style:none; padding:0;">
-      <li>⚡ Manual processes consuming 40% of team productivity</li>
-      <li>📉 Market fragmentation leading to missed opportunities</li>
-      <li>🔍 Lack of data-driven decision making</li>
-    </ul>
-  </div>`,
-
-    `<div style="text-align:left; padding: 40px 60px;">
-    <h2 style="font-size:2em; font-weight:800; margin-bottom:1em;">Our Solution</h2>
-    <p style="font-size:1em; color:#333; margin-bottom:1.5em;">An end-to-end platform that automates the mundane and amplifies creativity.</p>
-    <div style="display:flex; gap:20px; flex-wrap:wrap;">
-      <div style="flex:1; min-width:200px; padding:20px; background:#f5f5f5;">
-        <h3 style="font-weight:700; margin-bottom:0.5em;">Smart Algorithms</h3>
-        <p style="font-size:0.9em; color:#666;">AI that learns and adapts to your workflow</p>
-      </div>
-      <div style="flex:1; min-width:200px; padding:20px; background:#f5f5f5;">
-        <h3 style="font-weight:700; margin-bottom:0.5em;">Easy Integration</h3>
-        <p style="font-size:0.9em; color:#666;">Connect with 100+ tools in minutes</p>
-      </div>
-    </div>
-  </div>`,
-
-    `<div style="text-align:left; padding: 40px 60px;">
-    <h2 style="font-size:2em; font-weight:800; margin-bottom:1em;">Market Opportunity</h2>
-    <div style="display:flex; gap:40px; margin-top:1em;">
-      <div style="text-align:center;">
-        <p style="font-size:2.5em; font-weight:900; color:#0047FF;">$50B</p>
-        <p style="font-size:0.85em; color:#666;">Total Addressable Market</p>
-      </div>
-      <div style="text-align:center;">
-        <p style="font-size:2.5em; font-weight:900; color:#0047FF;">$10B</p>
-        <p style="font-size:0.85em; color:#666;">Serviceable Market</p>
-      </div>
-      <div style="text-align:center;">
-        <p style="font-size:2.5em; font-weight:900; color:#0047FF;">5%</p>
-        <p style="font-size:0.85em; color:#666;">Year 1 Target</p>
-      </div>
-    </div>
-  </div>`,
-
-    `<div style="text-align:center; padding: 60px 40px;">
-    <h2 style="font-size:2em; font-weight:800; margin-bottom:1em;">Revenue Model</h2>
-    <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:1.5em;">
-      <div style="padding:30px 40px; background:#f5f5f5; min-width:180px;">
-        <p style="font-size:0.8em; color:#666; text-transform:uppercase; letter-spacing:0.1em;">Basic</p>
-        <p style="font-size:2em; font-weight:900;">$29<span style="font-size:0.4em; color:#999;">/mo</span></p>
-      </div>
-      <div style="padding:30px 40px; background:#000; color:#fff; min-width:180px;">
-        <p style="font-size:0.8em; color:#aaa; text-transform:uppercase; letter-spacing:0.1em;">Pro</p>
-        <p style="font-size:2em; font-weight:900;">$99<span style="font-size:0.4em; color:#666;">/mo</span></p>
-      </div>
-      <div style="padding:30px 40px; background:#f5f5f5; min-width:180px;">
-        <p style="font-size:0.8em; color:#666; text-transform:uppercase; letter-spacing:0.1em;">Enterprise</p>
-        <p style="font-size:2em; font-weight:900;">Custom</p>
-      </div>
-    </div>
-  </div>`,
-];
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
+import { listProjects, createProject } from "@/lib/api";
+import type { Project } from "@/types";
 
 export function DashboardClient() {
-    const [isPitchdeckView, setIsPitchdeckView] = useState(false);
-    const [isDeckReady, setIsDeckReady] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { user } = useAuth();
 
-    const handleDeckReady = () => {
-        setIsDeckReady(true);
-    };
+  useEffect(() => {
+    listProjects()
+      .then(setProjects)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-    return (
-        <div className="flex flex-col h-full">
-            {/* Top bar — generous spacing matching projects page */}
-            <div
-                className="flex justify-between items-center border-b hairline bg-white flex-shrink-0"
-                style={{
-                    padding: "clamp(24px, 3vw, 40px) clamp(32px, 4vw, 64px)",
-                }}
-            >
-                <div>
-                    <p
-                        className="swiss-label text-gray-200"
-                        style={{ marginBottom: "10px" }}
-                    >
-                        Workspace
-                    </p>
-                    <h1 className="text-display font-black uppercase tracking-tight leading-none">
-                        {isPitchdeckView ? "Pitchdeck" : "Dashboard"}
-                    </h1>
-                    <p
-                        className="text-body-lg text-gray-300 leading-relaxed"
-                        style={{ marginTop: "10px" }}
-                    >
-                        {isPitchdeckView
-                            ? "Review and refine your generated pitchdeck."
-                            : "Chat with the agent to create your pitch."}
-                    </p>
-                </div>
+  const handleCreate = useCallback(async () => {
+    if (!newName.trim()) return;
+    setCreating(true);
+    setError("");
+    try {
+      const project = await createProject(newName.trim());
+      const slug = project.name.toLowerCase().replace(/\s+/g, "-");
+      router.push(`/${user.username}/${slug}/ideation`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create project");
+    } finally {
+      setCreating(false);
+    }
+  }, [newName, router, user.username]);
 
-                <button
-                    onClick={() => setIsPitchdeckView(!isPitchdeckView)}
-                    className="group relative flex items-center border border-black text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-black hover:text-white transition-colors duration-200 flex-shrink-0"
-                    style={{ padding: "18px 36px" }}
-                >
-                    <span className="relative flex" style={{ width: "10px", height: "10px", marginRight: "14px" }}>
-                        <span
-                            className="animate-ping absolute inset-0 bg-accent opacity-75"
-                            style={{ borderRadius: "50%" }}
-                        />
-                        <span
-                            className="relative inline-flex bg-accent"
-                            style={{ width: "10px", height: "10px", borderRadius: "50%" }}
-                        />
-                    </span>
-                    {isPitchdeckView ? "Chat" : "Pitchdeck"}
-                    <span
-                        className="inline-block ml-5 transition-transform group-hover:translate-x-1"
-                        style={{ fontSize: "18px" }}
-                    >
-                        &rarr;
-                    </span>
-                </button>
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 overflow-hidden">
-                {isPitchdeckView ? (
-                    <div
-                        className="h-full w-full bg-[#fafafa]"
-                        style={{ padding: "clamp(24px, 3vw, 48px) clamp(32px, 4vw, 64px)" }}
-                    >
-                        <div className="h-full max-w-[1200px] mx-auto border hairline shadow-sm bg-white overflow-hidden">
-                            <DeckViewer slides={MOCK_SLIDES} />
-                        </div>
-                    </div>
-                ) : (
-                    <div className="h-full w-full">
-                        <DashboardChatPanel onDeckReady={handleDeckReady} />
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="h-full">
+      {/* Header */}
+      <div
+        className="border-b hairline bg-white"
+        style={{ padding: "clamp(24px, 3vw, 40px) clamp(32px, 4vw, 64px)" }}
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="swiss-label text-gray-200" style={{ marginBottom: "10px" }}>
+              Overview
+            </p>
+            <h1 className="text-display font-black uppercase tracking-tight leading-none">
+              Projects
+            </h1>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="group inline-flex items-center bg-black text-white text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-accent transition-colors flex-shrink-0"
+            style={{ padding: "18px 36px" }}
+          >
+            New Project
+            <span className="inline-block ml-5 transition-transform group-hover:translate-x-1" style={{ fontSize: "18px" }}>
+              &rarr;
+            </span>
+          </button>
         </div>
-    );
+      </div>
+
+      {/* Project Grid */}
+      <div style={{ padding: "clamp(24px, 3vw, 48px) clamp(32px, 4vw, 64px)" }}>
+        {loading ? (
+          <div className="flex items-center justify-center" style={{ padding: "64px 0" }}>
+            <p className="text-[13px] text-gray-200 uppercase tracking-[0.08em]">Loading...</p>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center" style={{ padding: "80px 0" }}>
+            <p className="text-[16px] text-gray-300" style={{ marginBottom: "24px" }}>
+              No projects yet. Create your first pitch.
+            </p>
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-black text-white text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-accent transition-colors"
+              style={{ padding: "18px 36px" }}
+            >
+              Create Project
+            </button>
+          </div>
+        ) : (
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            style={{ gap: "clamp(20px, 2.5vw, 40px)" }}
+          >
+            {/* New Pitch Card */}
+            <button
+              onClick={() => setShowModal(true)}
+              className="border border-dashed border-gray-100 bg-[#fafafa] hover:border-black transition-colors flex flex-col items-center justify-center aspect-[4/3]"
+            >
+              <span className="text-[28px] text-gray-200 font-light" style={{ marginBottom: "12px" }}>+</span>
+              <span className="text-[12px] text-gray-200 uppercase tracking-[0.1em] font-bold">
+                New Pitch
+              </span>
+            </button>
+
+            {/* Project Cards */}
+            {projects.map((project) => {
+              const slug = project.name.toLowerCase().replace(/\s+/g, "-");
+              return (
+                <a
+                  key={project.id}
+                  href={`/${user.username}/${slug}/ideation`}
+                  className="group border border-gray-100 hover:border-black transition-colors"
+                >
+                  {/* Thumbnail area */}
+                  <div className="aspect-[4/3] bg-[#fafafa] border-b hairline flex items-center justify-center">
+                    {project.full_html ? (
+                      <span className="text-[11px] text-gray-200 font-mono uppercase tracking-wider">FULL</span>
+                    ) : (
+                      <span className="text-[11px] text-gray-200 font-mono uppercase tracking-wider">
+                        {project.slides_html.length} slides
+                      </span>
+                    )}
+                  </div>
+                  {/* Meta */}
+                  <div style={{ padding: "clamp(16px, 2vw, 24px)" }}>
+                    <p className="text-[14px] font-bold text-black truncate">{project.name}</p>
+                    {project.prompt && (
+                      <p className="text-[12px] text-gray-300 truncate" style={{ marginTop: "6px" }}>
+                        {project.prompt}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between" style={{ marginTop: "12px" }}>
+                      <span className={`text-[10px] font-bold uppercase tracking-[0.1em] ${
+                        project.status === "shared" ? "text-green-600" :
+                        project.status === "generating" ? "text-accent" :
+                        "text-gray-200"
+                      }`}>
+                        {project.status}
+                      </span>
+                      <span className="text-[11px] text-gray-200">
+                        {new Date(project.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* New Project Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-[480px] mx-4">
+            <div className="border-b hairline" style={{ padding: "24px 32px" }}>
+              <h2 className="text-[18px] font-bold uppercase tracking-[0.04em]">New Project</h2>
+            </div>
+            <div style={{ padding: "32px" }}>
+              <label className="block text-[12px] text-gray-200 uppercase tracking-[0.08em] font-bold" style={{ marginBottom: "12px" }}>
+                Project Name
+              </label>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCreate();
+                  if (e.key === "Escape") setShowModal(false);
+                }}
+                placeholder="My Startup Pitch"
+                autoFocus
+                className="w-full border-b-2 border-gray-100 bg-transparent focus:outline-none focus:border-black transition-colors"
+                style={{ padding: "16px 0", fontSize: "16px" }}
+              />
+              {error && (
+                <p className="text-[12px] text-red-500" style={{ marginTop: "12px" }}>
+                  {error}
+                </p>
+              )}
+            </div>
+            <div className="flex justify-end border-t hairline" style={{ padding: "20px 32px", gap: "12px" }}>
+              <button
+                onClick={() => { setShowModal(false); setNewName(""); setError(""); }}
+                className="text-[13px] font-bold uppercase tracking-[0.1em] text-gray-300 hover:text-black transition-colors"
+                style={{ padding: "14px 24px" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreate}
+                disabled={!newName.trim() || creating}
+                className="bg-black text-white text-[13px] font-bold uppercase tracking-[0.1em] hover:bg-accent transition-colors disabled:opacity-30"
+                style={{ padding: "14px 32px" }}
+              >
+                {creating ? "Creating..." : "Create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

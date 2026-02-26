@@ -1,28 +1,31 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { ChatMessage as ChatMessageType, ProjectDocument } from "@/types";
+import type { ChatMessage as ChatMessageType, ExtractionState, Project } from "@/types";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
+import { sendMessage as apiSendMessage } from "@/lib/api";
 
 interface ChatPanelProps {
-  initialMessages: ChatMessageType[];
   projectId: string;
-  onDocumentsReady?: (docIds: string[]) => void;
-  pendingDocuments?: ProjectDocument[];
+  initialMessages: ChatMessageType[];
+  mode: "doc" | "design";
+  onExtractionUpdate?: (state: ExtractionState, allComplete: boolean) => void;
+  onDesignGenerated?: (project: Project) => void;
+  onModeChange?: (mode: "doc" | "design") => void;
 }
 
 export function ChatPanel({
-  initialMessages,
   projectId,
-  onDocumentsReady,
-  pendingDocuments,
+  initialMessages,
+  mode,
+  onExtractionUpdate,
+  onDesignGenerated,
+  onModeChange,
 }: ChatPanelProps) {
-  const [messages, setMessages] =
-    useState<ChatMessageType[]>(initialMessages);
+  const [messages, setMessages] = useState<ChatMessageType[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -31,103 +34,118 @@ export function ChatPanel({
     }
   }, [messages, isTyping]);
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   const handleSend = useCallback(
-    (content: string) => {
-      const userMessage: ChatMessageType = {
-        id: `msg-${Date.now()}`,
-        projectId,
+    async (content: string) => {
+      // Optimistic user message
+      const tempUserMsg: ChatMessageType = {
+        id: `temp-${Date.now()}`,
+        project_id: projectId,
         role: "user",
         content,
-        createdAt: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       };
-
-      setMessages((prev) => [...prev, userMessage]);
+      setMessages((prev) => [...prev, tempUserMsg]);
       setIsTyping(true);
 
-      timeoutRef.current = setTimeout(() => {
-        // Pick 2-3 random pending documents to mark as ready
-        const pending = pendingDocuments ?? [];
-        const pickCount = Math.min(
-          pending.length,
-          Math.floor(Math.random() * 2) + 2 // 2 or 3
-        );
-        const shuffled = [...pending].sort(() => Math.random() - 0.5);
-        const picked = shuffled.slice(0, pickCount);
+      try {
+        const response = await apiSendMessage(projectId, content, mode);
 
-        // Build response text
-        let responseText: string;
-        if (picked.length > 0) {
-          const names = picked.map((d) => d.title);
-          const remaining = pending.length - picked.length;
-          if (remaining > 0) {
-            responseText = `Based on your input, I've marked **${names.join("** and **")}** as ready. ${remaining} more to go.`;
-          } else {
-            responseText = `I've marked **${names.join("** and **")}** as ready. All documents are now complete! You can now create your pitchdeck.`;
-          }
-        } else {
-          responseText =
-            "All documents are already ready. You can now create your pitchdeck.";
+        // Replace temp message + add AI response
+        setMessages((prev) => {
+          const withoutTemp = prev.filter((m) => m.id !== tempUserMsg.id);
+          // The backend saves the user message, but the response only returns the assistant message
+          // Keep the optimistic user message and add the assistant response
+          return [...withoutTemp, tempUserMsg, response.message];
+        });
+
+        // Notify parent about extraction state
+        if (onExtractionUpdate) {
+          onExtractionUpdate(response.extraction_state, response.all_complete);
         }
 
-        const aiResponse: ChatMessageType = {
-          id: `msg-${Date.now() + 1}`,
-          projectId,
+        // Notify parent about design generation
+        if (response.design_generation_triggered && response.project && onDesignGenerated) {
+          onDesignGenerated(response.project);
+        }
+      } catch (err) {
+        const errorMsg: ChatMessageType = {
+          id: `error-${Date.now()}`,
+          project_id: projectId,
           role: "assistant",
-          content: responseText,
-          createdAt: new Date().toISOString(),
+          content: "Sorry, something went wrong. Please try again.",
+          created_at: new Date().toISOString(),
         };
-
-        setMessages((prev) => [...prev, aiResponse]);
+        setMessages((prev) => [...prev, errorMsg]);
+      } finally {
         setIsTyping(false);
-
-        // Notify parent about newly ready documents
-        if (picked.length > 0 && onDocumentsReady) {
-          onDocumentsReady(picked.map((d) => d.id));
-        }
-      }, 1500);
+      }
     },
-    [projectId, onDocumentsReady, pendingDocuments]
+    [projectId, mode, onExtractionUpdate, onDesignGenerated]
   );
 
   return (
     <div className="flex flex-col h-full">
-      {/* Agent header — generous */}
+      {/* Agent header */}
       <div
         className="flex-shrink-0 border-b hairline bg-[#fafafa]"
         style={{ padding: "clamp(20px, 2.5vw, 32px) clamp(24px, 3vw, 36px)" }}
       >
-        <div className="flex items-center" style={{ gap: "18px" }}>
-          <div
-            className="flex items-center justify-center bg-black text-white text-[14px] font-bold flex-shrink-0"
-            style={{ width: "44px", height: "44px" }}
-          >
-            T
-          </div>
-          <div>
-            <p className="font-bold uppercase tracking-[0.08em]" style={{ fontSize: "15px" }}>
-              Traction Agent
-            </p>
-            <p
-              className="text-[12px] text-green-600 flex items-center"
-              style={{ gap: "8px", marginTop: "6px" }}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center" style={{ gap: "18px" }}>
+            <div
+              className="flex items-center justify-center bg-black text-white text-[14px] font-bold flex-shrink-0"
+              style={{ width: "44px", height: "44px" }}
             >
-              <span
-                className="inline-block bg-green-500 flex-shrink-0"
-                style={{ width: "8px", height: "8px" }}
-              />
-              Online
-            </p>
+              T
+            </div>
+            <div>
+              <p className="font-bold uppercase tracking-[0.08em]" style={{ fontSize: "15px" }}>
+                Traction Agent
+              </p>
+              <p
+                className="text-[12px] text-green-600 flex items-center"
+                style={{ gap: "8px", marginTop: "6px" }}
+              >
+                <span
+                  className="inline-block bg-green-500 flex-shrink-0"
+                  style={{ width: "8px", height: "8px" }}
+                />
+                Online
+              </p>
+            </div>
           </div>
+
+          {/* Mode toggle */}
+          {onModeChange && (
+            <div className="flex" style={{ gap: "4px" }}>
+              <button
+                onClick={() => onModeChange("doc")}
+                className={`text-[11px] uppercase tracking-[0.1em] font-bold transition-colors ${
+                  mode === "doc"
+                    ? "bg-black text-white"
+                    : "bg-transparent text-gray-300 hover:text-black"
+                }`}
+                style={{ padding: "8px 16px" }}
+              >
+                Doc
+              </button>
+              <button
+                onClick={() => onModeChange("design")}
+                className={`text-[11px] uppercase tracking-[0.1em] font-bold transition-colors ${
+                  mode === "design"
+                    ? "bg-black text-white"
+                    : "bg-transparent text-gray-300 hover:text-black"
+                }`}
+                style={{ padding: "8px 16px" }}
+              >
+                Design
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Messages — generous padding */}
+      {/* Messages */}
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto"
@@ -140,23 +158,11 @@ export function ChatPanel({
 
           {isTyping && (
             <div className="flex justify-start" style={{ paddingLeft: "62px" }}>
-              <div
-                className="bg-[#f2f2f2]"
-                style={{ padding: "22px 28px" }}
-              >
+              <div className="bg-[#f2f2f2]" style={{ padding: "22px 28px" }}>
                 <div className="flex" style={{ gap: "10px" }}>
-                  <span
-                    className="bg-gray-200 animate-pulse"
-                    style={{ width: "9px", height: "9px" }}
-                  />
-                  <span
-                    className="bg-gray-200 animate-pulse"
-                    style={{ width: "9px", height: "9px", animationDelay: "0.2s" }}
-                  />
-                  <span
-                    className="bg-gray-200 animate-pulse"
-                    style={{ width: "9px", height: "9px", animationDelay: "0.4s" }}
-                  />
+                  <span className="bg-gray-200 animate-pulse" style={{ width: "9px", height: "9px" }} />
+                  <span className="bg-gray-200 animate-pulse" style={{ width: "9px", height: "9px", animationDelay: "0.2s" }} />
+                  <span className="bg-gray-200 animate-pulse" style={{ width: "9px", height: "9px", animationDelay: "0.4s" }} />
                 </div>
               </div>
             </div>
@@ -167,7 +173,11 @@ export function ChatPanel({
       {/* Input */}
       <div className="border-t hairline flex-shrink-0">
         <div style={{ padding: "0 clamp(24px, 3vw, 36px)" }}>
-          <ChatInput onSubmit={handleSend} disabled={isTyping} />
+          <ChatInput
+            onSubmit={handleSend}
+            disabled={isTyping}
+            placeholder={mode === "design" ? "Describe changes for your deck..." : "Tell me about your startup..."}
+          />
         </div>
       </div>
     </div>

@@ -1,16 +1,5 @@
-import { shareLinks, projects } from "@/lib/mock-data";
-
 export function GET() {
   const baseUrl = "https://traction-ai.me";
-
-  const pitchEntries = shareLinks
-    .map((link) => {
-      const project = projects.find((p) => p.id === link.projectId);
-      if (!project) return null;
-      return `- [${project.name} — Pitch Deck](${baseUrl}/share/${link.projectId}): ${project.prompt}`;
-    })
-    .filter(Boolean)
-    .join("\n");
 
   const content = `# Traction
 
@@ -18,11 +7,12 @@ export function GET() {
 
 Traction helps founders, startups, and businesses generate professional pitch decks with supporting documents including executive summaries, financial projections, market research, SWOT analysis, competitive analysis, and more.
 
-## Public Pitch Decks
+## How It Works
 
-The following pitch decks are publicly shared and available for viewing:
-
-${pitchEntries}
+1. Create a project and chat with the Traction Agent about your startup
+2. The agent extracts structured data across 9 document categories
+3. Switch to design mode to generate a full pitch deck + documents
+4. Share your pitch at traction-ai.me/{username}/{project-name}
 
 ## Links
 

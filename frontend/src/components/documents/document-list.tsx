@@ -1,9 +1,8 @@
-import type { ProjectDocument } from "@/types";
-import Link from "next/link";
+import type { ProjectDocument, ExtractionState } from "@/types";
 
 interface DocumentListProps {
   documents: ProjectDocument[];
-  readyDocIds?: Set<string>;
+  extractionState?: ExtractionState;
   onSelect?: (doc: ProjectDocument) => void;
 }
 
@@ -19,18 +18,19 @@ const DOC_TYPE_ABBREV: Record<string, string> = {
   "executive-summary": "ES",
 };
 
-export function DocumentList({ documents, readyDocIds }: DocumentListProps) {
+export function DocumentList({ documents, extractionState, onSelect }: DocumentListProps) {
   return (
     <div>
       {documents.map((doc, i) => {
-        const isReady = readyDocIds ? readyDocIds.has(doc.id) : doc.status === "ready";
+        const stateEntry = extractionState?.[doc.type];
+        const isComplete = stateEntry?.is_complete ?? (doc.fields?.is_complete === true);
         const abbrev = DOC_TYPE_ABBREV[doc.type] || "??";
 
         const inner = (
           <>
             {/* Check circle */}
             <div className="flex-shrink-0">
-              {isReady ? (
+              {isComplete ? (
                 <div
                   className="flex items-center justify-center bg-black text-white"
                   style={{ width: "28px", height: "28px", borderRadius: "50%" }}
@@ -57,7 +57,7 @@ export function DocumentList({ documents, readyDocIds }: DocumentListProps) {
             <div className="min-w-0 flex-1">
               <p
                 className={`text-[13px] font-bold truncate leading-tight ${
-                  isReady ? "text-black" : "text-gray-400"
+                  isComplete ? "text-black" : "text-gray-400"
                 }`}
               >
                 {doc.title}
@@ -67,7 +67,7 @@ export function DocumentList({ documents, readyDocIds }: DocumentListProps) {
             {/* Type abbreviation */}
             <span
               className={`text-[10px] font-mono tracking-wider flex-shrink-0 ${
-                isReady ? "text-black" : "text-gray-200"
+                isComplete ? "text-black" : "text-gray-200"
               }`}
             >
               {abbrev}
@@ -81,19 +81,19 @@ export function DocumentList({ documents, readyDocIds }: DocumentListProps) {
           borderBottom: i < documents.length - 1 ? "1px solid #f0f0f0" : "none",
         };
 
-        return isReady ? (
-          <Link
+        return isComplete && onSelect ? (
+          <button
             key={doc.id}
-            href={`/projects/${doc.projectId}/documents/${doc.id}?from=dashboard`}
-            className="flex items-center hover:bg-[#fafafa] transition-colors group"
+            onClick={() => onSelect(doc)}
+            className="w-full flex items-center hover:bg-[#fafafa] transition-colors group text-left"
             style={rowStyle}
           >
             {inner}
-          </Link>
+          </button>
         ) : (
           <div
             key={doc.id}
-            className="flex items-center opacity-60 cursor-default"
+            className={`flex items-center ${isComplete ? "" : "opacity-60 cursor-default"}`}
             style={rowStyle}
           >
             {inner}

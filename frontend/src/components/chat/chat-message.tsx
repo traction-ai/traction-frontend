@@ -38,7 +38,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           className="block text-[11px] text-gray-200"
           style={{ marginTop: "14px" }}
         >
-          {new Date(message.createdAt).toLocaleTimeString("en-US", {
+          {new Date(message.created_at).toLocaleTimeString("en-US", {
             hour: "numeric",
             minute: "2-digit",
           })}

@@ -27,63 +27,16 @@ function NavLink({ href, label, isActive }: { href: string; label: string; isAct
 
 export function AppSidebar() {
   const pathname = usePathname();
-
-  // Context detection
-  const projectMatch = pathname.match(/^\/projects\/([^/]+)/);
-  const projectId = projectMatch ? projectMatch[1] : null;
-  const isNewPitch = pathname === "/dashboard";
   const { user } = useAuth();
 
-  // Build context-aware nav items (above divider)
-  const topItems: { label: string; href: string; isActive: boolean }[] = [];
-
-  // PROJECTS — always shown, exact match only
-  topItems.push({
-    label: "Projects",
-    href: "/projects",
-    isActive: pathname === "/projects",
-  });
-
-  if (isNewPitch) {
-    // New pitch context: show Dashboard
-    topItems.push({
-      label: "Dashboard",
-      href: "/dashboard",
-      isActive: true,
-    });
-  } else if (projectId) {
-    // Inside a project: show Dashboard + Documents
-    topItems.push({
-      label: "Dashboard",
-      href: `/projects/${projectId}`,
-      isActive: pathname === `/projects/${projectId}` || pathname.startsWith(`/projects/${projectId}/finalize`),
-    });
-    topItems.push({
-      label: "Documents",
-      href: `/projects/${projectId}/documents`,
-      isActive: pathname === `/projects/${projectId}/documents`,
-    });
-  }
-
-  // Bottom items (below divider) — always visible
-  const bottomItems: { label: string; href: string; isActive: boolean }[] = [
-    {
-      label: "Shared",
-      href: "/shared",
-      isActive: pathname === "/shared",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      isActive: pathname === "/settings",
-    },
-  ];
+  const isDashboard = pathname === "/dashboard" || pathname === "/dashboard/shared";
+  const isIdeation = pathname.includes("/ideation");
 
   return (
     <aside className="hidden lg:flex lg:flex-col w-[280px] h-screen border-r hairline bg-white flex-shrink-0">
       {/* Logo */}
       <div className="h-[72px] flex items-center border-b hairline" style={{ padding: "0 28px" }}>
-        <Link href="/projects" className="text-[22px] font-black tracking-tight">
+        <Link href="/dashboard" className="text-[22px] font-black tracking-tight">
           TRACTION<span className="text-accent">.</span>
         </Link>
       </div>
@@ -91,17 +44,26 @@ export function AppSidebar() {
       {/* Navigation */}
       <nav className="flex-1" style={{ padding: "32px 20px 20px" }}>
         <div className="flex flex-col" style={{ gap: "2px" }}>
-          {topItems.map((item) => (
-            <NavLink key={item.label} href={item.href} label={item.label} isActive={item.isActive} />
-          ))}
+          <NavLink
+            href="/dashboard"
+            label="Dashboard"
+            isActive={pathname === "/dashboard"}
+          />
         </div>
 
         <div className="border-t hairline" style={{ margin: "20px 16px" }} />
 
         <div className="flex flex-col" style={{ gap: "2px" }}>
-          {bottomItems.map((item) => (
-            <NavLink key={item.label} href={item.href} label={item.label} isActive={item.isActive} />
-          ))}
+          <NavLink
+            href="/dashboard/shared"
+            label="Shared"
+            isActive={pathname === "/dashboard/shared"}
+          />
+          <NavLink
+            href="/settings"
+            label="Settings"
+            isActive={pathname === "/settings"}
+          />
         </div>
       </nav>
 
