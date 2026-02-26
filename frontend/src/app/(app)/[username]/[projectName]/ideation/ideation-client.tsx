@@ -194,6 +194,7 @@ export function IdeationClient({ username, projectName }: IdeationClientProps) {
               projectId={project.id}
               initialMessages={messages}
               mode={mode}
+              allComplete={allComplete}
               onExtractionUpdate={handleExtractionUpdate}
               onDesignGenerated={handleDesignGenerated}
               onModeChange={handleModeChange}

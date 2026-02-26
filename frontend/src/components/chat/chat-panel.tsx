@@ -4,12 +4,13 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import type { ChatMessage as ChatMessageType, ExtractionState, Project } from "@/types";
 import { ChatMessage } from "./chat-message";
 import { ChatInput } from "./chat-input";
-import { sendMessage as apiSendMessage } from "@/lib/api";
+import { sendMessage as apiSendMessage, ApiError } from "@/lib/api";
 
 interface ChatPanelProps {
   projectId: string;
   initialMessages: ChatMessageType[];
   mode: "doc" | "design";
+  allComplete?: boolean;
   onExtractionUpdate?: (state: ExtractionState, allComplete: boolean) => void;
   onDesignGenerated?: (project: Project) => void;
   onModeChange?: (mode: "doc" | "design") => void;
@@ -19,6 +20,7 @@ export function ChatPanel({
   projectId,
   initialMessages,
   mode,
+  allComplete = false,
   onExtractionUpdate,
   onDesignGenerated,
   onModeChange,
@@ -68,11 +70,21 @@ export function ChatPanel({
           onDesignGenerated(response.project);
         }
       } catch (err) {
+        let errorContent = "Sorry, something went wrong. Please try again.";
+        if (err instanceof ApiError && err.status === 422) {
+          try {
+            const body = JSON.parse(JSON.parse(err.message).detail);
+            const count = body.incomplete_count ?? "some";
+            errorContent = `${body.message} (${count} remaining)`;
+          } catch {
+            errorContent = "All 9 documents must be complete before generating designs.";
+          }
+        }
         const errorMsg: ChatMessageType = {
           id: `error-${Date.now()}`,
           project_id: projectId,
           role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
+          content: errorContent,
           created_at: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, errorMsg]);
@@ -130,9 +142,13 @@ export function ChatPanel({
                 Doc
               </button>
               <button
-                onClick={() => onModeChange("design")}
+                onClick={() => allComplete && onModeChange("design")}
+                disabled={!allComplete}
+                title={!allComplete ? "Complete all 9 docs first" : undefined}
                 className={`text-[11px] uppercase tracking-[0.1em] font-bold transition-colors ${
-                  mode === "design"
+                  !allComplete
+                    ? "opacity-30 cursor-not-allowed bg-transparent text-gray-300"
+                    : mode === "design"
                     ? "bg-black text-white"
                     : "bg-transparent text-gray-300 hover:text-black"
                 }`}
